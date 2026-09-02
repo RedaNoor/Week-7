@@ -1,312 +1,75 @@
----
-noteId: "6e7a6300a52a11f195c04d45dfa62157"
-tags: []
+﻿## Task 2: Conversation Flows
 
----
+### Objective
 
+This task is about designing the actual call flow for a real-estate conversation. The call should feel like a real property sales discussion, not like a generic chatbot script.
 
-## Task 2: Conversation Flow Design
-
-### 1. Objective
-
-Design complete conversation flows for buyer, rental, commercial, investment, returning-customer, appointment-rescheduling, and appointment-cancellation scenarios.
-
-The agent should behave like a professional real estate sales representative rather than a conventional chatbot.
-
----
-
-## 2. Buyer Inquiry
+### Buyer flow
 
 ```text
-START
+Start
   ↓
 Greeting
   ↓
-Identify Intent
+Understand buyer intent
   ↓
-Buyer?
+Collect budget, area, type, and purpose
   ↓
-Collect Requirements
+Search the property catalog
   ↓
-Location + Budget + Property Type + Bedrooms
+Match 2-3 relevant options
   ↓
-Search Properties
+Ask whether the customer wants to view one
   ↓
-Properties Found?
- ┌──────────────┴──────────────┐
- NO                           YES
- │                             │
-Refine Requirements       Recommend 2–3
- │                         Properties
- └──────────────┬──────────────┘
-                ↓
-        Customer Interested?
-          ┌─────┴─────┐
-         NO          YES
-          │            │
-       Refine       Offer Visit
-                       ↓
-                 Check Calendar
-                       ↓
-                 Book Appointment
-                       ↓
-                 Send Confirmation
-                       ↓
-                      END
+Book a visit or send more details
+  ↓
+End
 ```
 
-### Information to Collect
-
-- Property type
-- Location
-- Budget
-- Number of bedrooms
-- Size
-- Purpose
-- Preferred visit time
-
----
-
-## 3. Rental Inquiry
+### Rental flow
 
 ```text
-START
- ↓
-Greeting
- ↓
-Identify Rental Requirement
- ↓
-Collect:
- ├── Location
- ├── Monthly Budget
- ├── Bedrooms
- ├── Furnished/Unfurnished
- └── Move-in Date
- ↓
-Search Rental Properties
- ↓
-Results Found?
- ├── NO → Refine Requirements
- └── YES
-       ↓
-Recommend Properties
-       ↓
-Customer Selects Property
-       ↓
-Offer Property Visit
-       ↓
-Check Calendar
-       ↓
-Book Appointment
-       ↓
-Send Confirmation
-       ↓
-END
+Start
+  ↓
+Identify rental requirement
+  ↓
+Ask for location, budget, rooms, and move-in date
+  ↓
+Search relevant rentals
+  ↓
+Recommend options
+  ↓
+Offer a visit or follow-up
+  ↓
+End
 ```
 
----
-
-## 4. Commercial Property Inquiry
+### Commercial flow
 
 ```text
-START
- ↓
-Identify Commercial Requirement
- ↓
-Collect:
- ├── Location
- ├── Commercial Property Type
- ├── Area Required
- ├── Budget
- ├── Business Type
- └── Buy/Rent
- ↓
-Search Commercial Inventory
- ↓
-Rank Suitable Properties
- ↓
-Recommend Properties
- ↓
-Customer Interested?
- ├── NO → Refine Search
- └── YES
-       ↓
-Schedule Site Visit
-       ↓
-Calendar
-       ↓
-Confirmation
-       ↓
-END
+Start
+  ↓
+Identify commercial requirement
+  ↓
+Collect business type, location, budget, and size need
+  ↓
+Search matching commercial inventory
+  ↓
+Recommend likely options
+  ↓
+Schedule visit or discussion
+  ↓
+End
 ```
 
----
+### Investment flow
 
-## 5. Investment Inquiry
+This path should be careful. The assistant can present facts and historical trends, but it should not guarantee returns or make claims that cannot be verified.
 
-```text
-START
- ↓
-Identify Investor
- ↓
-Collect:
- ├── Investment Budget
- ├── Location
- ├── Investment Horizon
- ├── Rental Income / Appreciation
- ├── Risk Preference
- └── Residential / Commercial
- ↓
-Retrieve Relevant Information
- ↓
-Identify Suitable Properties
- ↓
-Present Factual Information
- ↓
-Customer Interested?
- ├── NO → Refine Requirements
- └── YES
-       ↓
-Schedule Consultation / Visit
-       ↓
-Calendar
-       ↓
-Confirmation
-       ↓
-END
-```
+### Guardrail
 
-### Investment Guardrail
+The conversation should never promise financial return or say a property is perfect without verified support. This is one of the easiest places for a sales bot to over-claim.
 
-The agent must never guarantee financial returns.
+### Practical takeaway
 
-Instead of:
-
-> "Sir, is property ka 30% return guaranteed hai."
-
-Use:
-
-> "Sir, available historical information ke basis par is area mein appreciation hui hai, lekin future returns guarantee nahi kiye ja sakte."
-
----
-
-## 6. Returning Customer
-
-```text
-Incoming Call
-      ↓
-Identify Phone Number
-      ↓
-Customer Exists?
-   ┌──┴──┐
-  YES    NO
-   │      │
-Load    Create
-Memory  Customer
-   │      │
-   └──┬───┘
-      ↓
-Welcome Customer
-      ↓
-Recall Previous Preferences
-      ↓
-Ask What Has Changed
-      ↓
-Continue Conversation
-```
-
-Example:
-
-> "Assalam-o-Alaikum Ahmed sahib. Welcome back. Aap last time DHA mein 5 marla house dekh rahe thay. Kya abhi bhi same requirement hai?"
-
----
-
-## 7. Appointment Rescheduling
-
-```text
-Customer Requests Reschedule
-          ↓
-Identify Customer
-          ↓
-Find Existing Appointment
-          ↓
-Confirm Appointment
-          ↓
-Ask New Date/Time
-          ↓
-Check Calendar
-          ↓
-Available?
-     ┌────┴────┐
-    NO        YES
-     │          │
-Offer        Update
-Alternative  Appointment
-                ↓
-          Send Confirmation
-                ↓
-               END
-```
-
----
-
-## 8. Appointment Cancellation
-
-```text
-Customer Requests Cancellation
-            ↓
-Identify Customer
-            ↓
-Find Appointment
-            ↓
-Confirm Appointment
-            ↓
-Cancel Calendar Event
-            ↓
-Update Database
-            ↓
-Send Confirmation
-            ↓
-END
-```
-
----
-
-## 9. General Conversation Pattern
-
-All flows should follow a common high-level pattern:
-
-```text
-Greeting
-   ↓
-Intent Detection
-   ↓
-Requirement Discovery
-   ↓
-Information Retrieval
-   ↓
-Recommendation / Answer
-   ↓
-Objection Handling
-   ↓
-Next Best Action
-   ↓
-Appointment / Follow-up
-   ↓
-Confirmation
-   ↓
-Conversation End
-```
-
-### Design Principles
-
-1. Ask one important question at a time.
-2. Avoid long monologues.
-3. Confirm important details.
-4. Never invent property information.
-5. Offer alternatives when requirements cannot be met.
-6. Do not pressure customers.
-7. Always confirm successful tool execution before reporting success.
-8. Escalate complex cases to humans.
-9. Maintain context throughout the conversation.
-10. End with a clear next step.
+The goal is to keep the conversation moving but still sound human. The caller should feel that the assistant understands the issue and is helping, not reading from a script.

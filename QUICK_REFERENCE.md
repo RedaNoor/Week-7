@@ -1,25 +1,26 @@
-# Quick Reference - Week 7 Capstone Implementation
+﻿# Quick Reference
 
-## What Was Done
+## What is in this project
 
-Your Week 7 real-estate AI voice agent project has been enhanced with:
+This project already has a few working pieces:
 
-1. **LangGraph Agent with Tools** - Intelligent conversation orchestration with automatic tool invocation
-2. **n8n-Ready Endpoints** - Production-grade API for n8n workflow integration
-3. **Hardened Postgres** - Lead memory and session state now fully schema-compliant
-4. **External Service Contracts** - Email, Calendar, and CRM services with fallback mechanisms
+1. conversation flow and lead extraction
+2. property matching against the catalog
+3. appointment and follow-up logic
+4. Postgres-backed memory and session state
+5. webhook integration for internal services and automation
 
 ---
 
-## Quick Start
+## Quick start
 
-### 1. Run the Application
+### 1. Run the app
 ```bash
-cd c:\Users\ridan\Documents\Netixsol\Week 7
+cd c:\Users\ridan\Documents\Week 7
 python -m uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-### 2. Test the Agent
+### 2. Test lead analysis
 ```bash
 curl -X POST http://localhost:8000/lead/analyze \
   -H "Content-Type: application/json" \
@@ -29,7 +30,7 @@ curl -X POST http://localhost:8000/lead/analyze \
   }'
 ```
 
-### 3. Test n8n Orchestration
+### 3. Test the workflow endpoint
 ```bash
 curl -X POST http://localhost:8000/orchestrator/process-turn \
   -H "Content-Type: application/json" \
@@ -42,40 +43,40 @@ curl -X POST http://localhost:8000/orchestrator/process-turn \
 
 ---
 
-## Key Files
+## Main files
 
 | File | Purpose |
 |------|---------|
-| `app/orchestrator_endpoints.py` | n8n-ready API layer |
-| `app/services/langgraph_agent.py` | LangGraph orchestrator with tools |
-| `app/services/service_contracts.py` | Email, Calendar, CRM services |
-| `app/services/lead_memory.py` | Postgres-backed lead memory |
-| `IMPLEMENTATION_SUMMARY.md` | Full documentation |
+| app/orchestrator_endpoints.py | workflow API layer |
+| app/services/langgraph_agent.py | call flow and tool logic |
+| app/services/service_contracts.py | email, calendar, and CRM hooks |
+| app/services/lead_memory.py | Postgres-backed lead memory |
+| IMPLEMENTATION_SUMMARY.md | project overview |
 
 ---
 
-## Architecture
+## Basic flow
 
-```
-Incoming Call (Vapi/Twilio)
-         ↓
-    Main FastAPI
-         ↓
-    LangGraph Agent (with tools)
-         ↓
-    ┌─────┴─────┬─────────┐
-    ↓           ↓         ↓
- Postgres   n8n Webhooks  Memory
-    ↓           ↓         ↓
- Database   External     Session
-            Services    Context
+```text
+Incoming call
+   ↓
+FastAPI app
+   ↓
+Conversation logic
+   ↓
+   ┌─────┴─────┬─────────┐
+   ↓           ↓         ↓
+Postgres    Workflow  Memory
+   ↓           ↓         ↓
+Database    External   Session
+            Services   Context
 ```
 
 ---
 
-## New Endpoints
+## Main endpoints
 
-### Process Conversation Turn
+### Process a conversation turn
 ```bash
 POST /orchestrator/process-turn
 {
@@ -85,7 +86,7 @@ POST /orchestrator/process-turn
 }
 ```
 
-### Sync Lead to Postgres
+### Sync a lead to Postgres
 ```bash
 POST /orchestrator/sync-lead-to-postgres
 {
@@ -96,47 +97,38 @@ POST /orchestrator/sync-lead-to-postgres
 }
 ```
 
-### Get Session Context
+### Get session context
 ```bash
 GET /orchestrator/session/{session_id}/context
 ```
 
-### Get Lead Profile
+### Get full lead profile
 ```bash
 GET /orchestrator/lead/{lead_id}/full-profile
 ```
 
 ---
 
-## Environment Setup
+## Environment setup
 
-Create a `.env` file:
+Create a .env file:
 ```bash
-# Database
 DATABASE_URL=postgresql://user:pass@localhost:5432/real_estate
-
-# APIs
 OPENAI_API_KEY=sk-xxx
 VAPI_API_KEY=xxx
 DEEPGRAM_API_KEY=xxx
-
-# n8n
 N8N_BASE_URL=http://localhost:5678/webhook
-
-# Email
 SMTP_HOST=smtp.gmail.com
 SMTP_USER=your-email@gmail.com
 SMTP_PASSWORD=app-password
-
-# Google Calendar
 GOOGLE_SERVICE_ACCOUNT_FILE=/path/to/service-account.json
 ```
 
 ---
 
-## Testing Workflow
+## Testing flow
 
-### Step 1: Process a Lead
+### Step 1: process a lead
 ```bash
 curl -X POST http://localhost:8000/orchestrator/process-turn \
   -H "Content-Type: application/json" \
@@ -147,25 +139,7 @@ curl -X POST http://localhost:8000/orchestrator/process-turn \
   }'
 ```
 
-**Expected Response:**
-```json
-{
-  "status": "success",
-  "session_id": "sess_001",
-  "result": {
-    "profile": {
-      "budget": "2 crore",
-      "city": "Karachi",
-      "area": "Gulshan-e-Iqbal",
-      "property_type": "Apartment"
-    },
-    "intent": "property_inquiry",
-    "recommendations": [...]
-  }
-}
-```
-
-### Step 2: Sync to Database
+### Step 2: sync to the database
 ```bash
 curl -X POST http://localhost:8000/orchestrator/sync-lead-to-postgres \
   -H "Content-Type: application/json" \
@@ -183,140 +157,64 @@ curl -X POST http://localhost:8000/orchestrator/sync-lead-to-postgres \
   }'
 ```
 
-### Step 3: Retrieve Full Context
+### Step 3: fetch the full lead context
 ```bash
 curl -X GET http://localhost:8000/orchestrator/lead/lead_001/full-profile
 ```
 
 ---
 
-## LangGraph Agent Tools
+## Built-in tools
 
-The agent can automatically call these tools:
+The flow can trigger these tools when needed:
 
-1. **book_property_visit** - Schedule a property viewing
-2. **match_properties_for_profile** - Find matching properties
-3. **create_crm_lead_contact** - Create CRM contact
-4. **publish_to_n8n** - Trigger n8n workflows
-5. **get_lead_memory_context** - Retrieve lead history
-
----
-
-## n8n Integration Points
-
-Events published to n8n:
-- `lead_created` / `lead_updated`
-- `appointment_scheduled` / `cancelled` / `rescheduled`
-- `email_booking_sent` / `email_followup_sent`
-- `calendar_event_created` / `calendar_event_cancelled`
-- `crm_contact_created` / `crm_contact_updated`
+1. book_property_visit - schedule a site visit
+2. match_properties_for_profile - look up likely matches
+3. create_crm_lead_contact - add a lead to the CRM
+4. publish_to_n8n - push events to the workflow system
+5. get_lead_memory_context - pull prior conversation context
 
 ---
 
-## Database Schema
+## Workflow events
 
-### leads table
-```sql
-id UUID PRIMARY KEY
-phone_number VARCHAR(30)
-customer_name VARCHAR(150)
-city VARCHAR(100)
-area VARCHAR(100)
-budget VARCHAR(100)
-property_type VARCHAR(50)
-purpose VARCHAR(50)
-appointment_interest BOOLEAN
-created_at TIMESTAMP
-updated_at TIMESTAMP
-```
+The app can publish events like:
 
-### lead_memory table
-```sql
-lead_id TEXT PRIMARY KEY
-profile JSONB
-transcript_history JSONB
-intent JSONB
-budget VARCHAR(100)
-city VARCHAR(100)
--- ... more fields for denormalized data
-updated_at TIMESTAMPTZ
-```
+- lead_created / lead_updated
+- appointment_scheduled / cancelled / rescheduled
+- email_booking_sent / email_followup_sent
+- calendar_event_created / calendar_event_cancelled
+- crm_contact_created / crm_contact_updated
 
 ---
 
 ## Debugging
 
-### Check if service is running
+### Check if the app is running
 ```bash
 curl http://localhost:8000/
-# Should return: {"status":"ok","app":"real_estate_voice_agent","capabilities":["voice","rag","appointments"]}
 ```
 
 ### Check database connection
 ```bash
-# Logs will show connection status
-# Look for "Database initialization" messages
+# Watch the startup logs for database initialization output
 ```
 
-### View local fallback logs
+### Check local fallback files
 ```bash
 # Emails: Week 7/app/data/email_log.json
 # CRM: Week 7/app/data/crm_operations.json
-# Lead Memory: Week 7/app/data/lead_memory.json
+# Lead memory: Week 7/app/data/lead_memory.json
 ```
 
 ---
 
-## Common Issues & Solutions
+## Common issues
 
-| Issue | Solution |
-|-------|----------|
-| n8n webhooks not called | Check N8N_BASE_URL and verify n8n is running |
-| Postgres connection error | Verify DATABASE_URL format and credentials |
-| Emails not sent | Check SMTP credentials, verify n8n email node |
-| Calendar sync failing | Check Google service account JSON path |
-| Appointment booking fails | Ensure all required fields in request |
-
----
-
-## Next Steps
-
-1. **Configure n8n**
-   - Set up email workflow with SMTP/Gmail
-   - Configure Google Calendar integration
-   - Set up CRM sync (HubSpot/Salesforce/Pipedrive)
-
-2. **Load Testing**
-   - Test with concurrent calls
-   - Monitor database performance
-   - Check n8n webhook throughput
-
-3. **Production Deployment**
-   - Set up monitoring (ELK, CloudWatch)
-   - Configure auto-scaling
-   - Set up database backups
-   - Enable SSL/TLS
-
----
-
-## Documentation
-
-- **Full Guide:** See `IMPLEMENTATION_SUMMARY.md`
-- **Original README:** See `README.md`
-- **Architecture Diagram:** In `IMPLEMENTATION_SUMMARY.md`
-
----
-
-## Support
-
-For detailed information on:
-- LangGraph agent configuration: See `app/services/langgraph_agent.py`
-- Service contracts: See `app/services/service_contracts.py`
-- Postgres integration: See `app/services/lead_memory.py`
-- n8n endpoints: See `app/orchestrator_endpoints.py`
-
----
-
-**Version:** 1.0.0  
-**Last Updated:** September 1, 2025  
-**Status:** Production Ready ✅
+| Issue | Fix |
+|-------|-----|
+| workflow webhook not firing | check the N8N_BASE_URL and verify the workflow service is running |
+| Postgres connection error | verify the DATABASE_URL and credentials |
+| emails not sending | check SMTP credentials and the workflow setup |
+| calendar sync failing | check the Google service account path |
+| appointment booking fails | make sure the request includes all required values |
