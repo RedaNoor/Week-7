@@ -1,0 +1,55 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment files
+.env
+.env.*
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and runtime artifacts
+*.log
+*.tmp
+*.bak
+
+# Python packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Test / coverage output
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Database / local data
+*.sqlite3
+*.db
+
+# Local app generated data
+app/data/*.json
+!app/data/crm_log.json
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node / frontend tooling if present
+node_modules/
