@@ -1,0 +1,26 @@
+school_id,name,near_location,city,type
+S001,Lahore Grammar School (LGS),DHA Phase 6,Lahore,Private
+S002,Beaconhouse School System,Gulberg,Lahore,Private
+S003,Aitchison College,Lahore Cantonment,Lahore,Private Boarding
+S004,Lahore American School,Raiwind Road,Lahore,International
+S005,LACAS,Johar Town,Lahore,Private
+S006,The City School,Model Town,Lahore,Private
+S007,Convent of Jesus and Mary,Lahore Cantonment,Lahore,Private
+S008,Roots Millennium Schools,F-11 Markaz,Islamabad,Private
+S009,Headstart School,F-8 Markaz,Islamabad,Private
+S010,International School of Islamabad (ISOI),Diplomatic Enclave,Islamabad,International
+S011,Beaconhouse F-7/3,F-7 Markaz,Islamabad,Private
+S012,Schola Nova,H-8,Islamabad,Private
+S013,Froebel's International School,F-11,Islamabad,Private
+S014,Karachi Grammar School,Clifton,Karachi,Private
+S015,Bay View Academy,DHA Phase 6,Karachi,Private
+S016,The Lyceum,Clifton,Karachi,Private
+S017,St. Patrick's High School,Saddar,Karachi,Missionary
+S018,Foundation Public School,Clifton,Karachi,Private
+S019,Beaconhouse Faisalabad,People's Colony,Faisalabad,Private
+S020,LGS Faisalabad,Wapda City,Faisalabad,Private
+S021,The City School Faisalabad,Sahiwal Road,Faisalabad,Private
+S022,Bahria Foundation School,Bahria Town Phase 8,Rawalpindi,Private
+S023,Roots School International,Bahria Town Phase 4,Rawalpindi,Private
+S024,St. Mary's Cambridge School,Murree Road,Rawalpindi,Missionary
+S025,Anglican Cathedral School,Liaquat Road,Rawalpindi,Private

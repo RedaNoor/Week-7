@@ -1,0 +1,43 @@
+property_id,name,developer,city,area,type,bedrooms,size_sqft,size_marla,price,status,purpose
+P001,5 Marla House in DHA Phase 6,Defence Housing Authority (DHA),Lahore,DHA Phase 6,House,3,1361,5.0,45000000,Available,Family
+P002,10 Marla House in DHA Phase 6,Defence Housing Authority (DHA),Lahore,DHA Phase 6,House,4,2722,10.0,90000000,Available,Family
+P003,1 Kanal House in DHA Phase 6,Defence Housing Authority (DHA),Lahore,DHA Phase 6,House,5,5445,20.0,175000000,Available,Family
+P004,10 Marla House in DHA Phase 7,Defence Housing Authority (DHA),Lahore,DHA Phase 7,House,4,2722,10.0,75000000,Reserved,Family
+P005,5 Marla Plot in DHA Phase 9 Prism,Defence Housing Authority (DHA),Lahore,DHA Phase 9 Prism,Plot,0,1361,5.0,14500000,Available,Investment
+P006,1 Kanal House in DHA Phase 9 Prism,Defence Housing Authority (DHA),Lahore,DHA Phase 9 Prism,House,6,5445,20.0,220000000,Available,Family
+P007,5 Marla House in Bahria Town Lahore,Bahria Town (Pvt) Ltd,Lahore,Bahria Town Lahore,House,3,1361,5.0,28000000,Available,Family
+P008,8 Marla House in Bahria Town Lahore,Bahria Town (Pvt) Ltd,Lahore,Bahria Town Lahore,House,4,2178,8.0,48000000,Available,Family
+P009,3 Bed Apartment in Bahria Town Lahore,Bahria Town (Pvt) Ltd,Lahore,Bahria Town Lahore,Apartment,3,1089,4.0,14500000,Available,Investment
+P010,10 Marla Villa in Lake City Lahore,Lahore Real Estate (Pvt) Ltd,Lahore,Lake City Lahore,House,4,2722,10.0,65000000,Available,Family
+P011,1 Kanal Farmhouse in Lake City Lahore,Lahore Real Estate (Pvt) Ltd,Lahore,Lake City Lahore,Farmhouse,6,5445,20.0,180000000,Available,Family
+P012,5 Marla House in Eden Housing,Eden Housing (Pvt) Ltd,Lahore,Eden Housing,House,3,1361,5.0,18500000,Available,Family
+P013,2 Bed Apartment in Gulberg,Lahore Real Estate (Pvt) Ltd,Lahore,Gulberg,Apartment,2,816,3.0,12500000,Available,Investment
+P014,10 Marla House in Johar Town,Eden Housing (Pvt) Ltd,Lahore,Johar Town,House,4,2722,10.0,55000000,Available,Family
+P015,1 Kanal House in Model Town,Eden Housing (Pvt) Ltd,Lahore,Model Town,House,6,5445,20.0,240000000,Available,Family
+P016,5 Marla House in Sector G-11,Capital Development Authority (CDA),Islamabad,Sector G-11,House,3,1361,5.0,35000000,Available,Family
+P017,10 Marla House in Sector G-11,Capital Development Authority (CDA),Islamabad,Sector G-11,House,4,2722,10.0,75000000,Available,Family
+P018,1 Kanal House in Sector F-11,Capital Development Authority (CDA),Islamabad,Sector F-11,House,6,5445,20.0,220000000,Available,Family
+P019,2 Bed Apartment in Sector I-8,Capital Development Authority (CDA),Islamabad,Sector I-8,Apartment,2,816,3.0,16500000,Available,Investment
+P020,10 Marla House in Sector D-12,Capital Development Authority (CDA),Islamabad,Sector D-12,House,5,2722,10.0,95000000,Available,Family
+P021,5 Marla Apartment in Capital Smart City,Capital Smart City,Islamabad,Capital Smart City,Apartment,3,1089,4.0,18500000,Available,Investment
+P022,1 Kanal Villa in Capital Smart City,Capital Smart City,Islamabad,Capital Smart City,House,5,5445,20.0,120000000,Available,Family
+P023,10 Marla House in Bahria Town Phase 7 Islamabad,Capital Development Authority (CDA),Islamabad,Bahria Town Islamabad Phase 7,House,4,2722,10.0,85000000,Available,Family
+P024,5 Marla House in Bahria Enclave,Capital Development Authority (CDA),Islamabad,Bahria Enclave,House,3,1361,5.0,42500000,Available,Family
+P025,1 Kanal Villa in Faisal Hills,Faisal Hills (Zem Builders),Islamabad,Faisal Hills,House,5,5445,20.0,145000000,Available,Family
+P026,2 Kanal Farmhouse in Gulberg Greens,Gulberg Greens (MR Properties),Islamabad,Gulberg Greens,Farmhouse,7,10890,40.0,320000000,Available,Family
+P027,10 Marla House in Park View City Islamabad,Park View City (Urban City),Islamabad,Park View City,House,4,2722,10.0,78000000,Available,Family
+P028,5 Marla House in B-17 Multi Gardens,Capital Smart City (Habib Rafiq),Islamabad,B-17 Multi Gardens,House,3,1361,5.0,28500000,Available,Family
+P029,120 sqyd Apartment in Bahria Town Karachi,Bahria Town Karachi,Karachi,Bahria Town Karachi Precinct 23,Apartment,2,1089,4.0,9500000,Available,Family
+P030,240 sqyd House in Bahria Town Karachi,Bahria Town Karachi,Karachi,Bahria Town Karachi Precinct 23,House,4,2178,8.0,38000000,Available,Family
+P031,5 Marla House in DHA City Karachi,DHA City Karachi (DCK),Karachi,DHA City Karachi Sector 3,House,3,1361,5.0,18500000,Available,Investment
+P032,1 Kanal House in DHA Karachi Phase 6,DHA City Karachi (DCK),Karachi,DHA Karachi Phase 6,House,6,5445,20.0,195000000,Available,Family
+P033,2 Bed Apartment in Crescent Bay,Emaar Pakistan (Pvt) Ltd,Karachi,Crescent Bay,Apartment,2,816,3.0,28500000,Available,Investment
+P034,3 Bed Apartment in Clifton Tower,Emaar Pakistan (Pvt) Ltd,Karachi,Clifton,Apartment,3,1361,5.0,42000000,Available,Family
+P035,10 Marla House in Gulistan-e-Johar,Bahria Town Karachi,Karachi,Gulistan-e-Johar,House,4,2722,10.0,35000000,Available,Family
+P036,5 Marla House in Wapda City Faisalabad,Sahasra Builders,Faisalabad,Wapda City Faisalabad,House,3,1361,5.0,12500000,Available,Family
+P037,10 Marla House in Sahasra Town,Sahasra Builders,Faisalabad,Sahasra Town,House,4,2722,10.0,22500000,Available,Family
+P038,3 Bed Apartment in Sitara Valley,Sitara Hi-Tech City (Pvt) Ltd,Faisalabad,Sitara Valley,Apartment,3,1089,4.0,11500000,Available,Investment
+P039,5 Marla House in Bahria Town Phase 8 Rawalpindi,Bahria Town (Pvt) Ltd,Rawalpindi,Bahria Town Phase 8,House,3,1361,5.0,22500000,Available,Family
+P040,10 Marla House in Bahria Town Phase 4 Rawalpindi,Bahria Town (Pvt) Ltd,Rawalpindi,Bahria Town Phase 4,House,4,2722,10.0,38500000,Available,Family
+P041,1 Kanal House in DHA Rawalpindi Phase 2,Defence Housing Authority (DHA),Rawalpindi,DHA Rawalpindi Phase 2,House,6,5445,20.0,165000000,Available,Family
+P042,5 Marla House in PWD Housing Society,Capital Smart City (Habib Rafiq),Rawalpindi,PWD Housing Society,House,3,1361,5.0,14500000,Available,Family

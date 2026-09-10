@@ -1,0 +1,26 @@
+hospital_id,name,near_location,city
+H001,National Hospital & Medical Centre,DHA Phase 6,Lahore
+H002,Doctors Hospital,Johar Town,Lahore
+H003,Shaukat Khanum Memorial Cancer Hospital,Johar Town,Lahore
+H004,Fatima Memorial Hospital,Shadman,Lahore
+H005,Lahore General Hospital,Township,Lahore
+H006,Ittefaq Hospital,Model Town,Lahore
+H007,Hameed Latif Hospital,Gulberg,Lahore
+H008,Shifa International Hospital,Sector H-8/4,Islamabad
+H009,Pakistan Institute of Medical Sciences (PIMS),Sector G-8/3,Islamabad
+H010,Quaid-e-Azam International Hospital,Bahria Town Phase 7,Islamabad
+H011,Ali Medical Centre,F-8 Markaz,Islamabad
+H012,Maroof International Hospital,F-11 Markaz,Islamabad
+H013,Nova Hospital,G-10,Islamabad
+H014,Aga Khan University Hospital,Stadium Road,Karachi
+H015,Liaquat National Hospital,National Stadium Road,Karachi
+H016,South City Hospital,Shahrah-e-Faisal,Karachi
+H017,Patel Hospital,Gulistan-e-Johar,Karachi
+H018,Dow University of Health Sciences,Ojha Campus,Karachi
+H019,Faisalabad Institute of Cardiology,Susan Road,Faisalabad
+H020,Allied Hospital,Airport Road,Faisalabad
+H021,National Hospital Faisalabad,Jhang Road,Faisalabad
+H022,Holy Family Hospital,Saidpur Road,Rawalpindi
+H023,Benazir Bhutto Hospital,Murree Road,Rawalpindi
+H024,Heart International Hospital,Bahria Town Phase 7,Rawalpindi
+H025,Militay Hospital (MH) Rawalpindi,Garh Road,Rawalpindi

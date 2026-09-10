@@ -1,0 +1,126 @@
+plan_id,property_id,plan_name,down_payment_percent,installment_months,total_payable,description
+P001-PP-01,P001,Spot Cash,100,0,42750000,5% discount on spot cash
+P001-PP-02,P001,24-Month Plan,25,24,45000000,"25% down payment, 24 monthly installments"
+P001-PP-03,P001,60-Month Plan,15,60,48600000,"8% premium, 5-year plan for family buyers"
+P002-PP-01,P002,Spot Cash,100,0,85500000,5% discount on spot cash
+P002-PP-02,P002,24-Month Plan,25,24,90000000,"25% down payment, 24 monthly installments"
+P002-PP-03,P002,60-Month Plan,15,60,97200000,"8% premium, 5-year plan for family buyers"
+P003-PP-01,P003,Spot Cash,100,0,166250000,5% discount on spot cash
+P003-PP-02,P003,24-Month Plan,25,24,175000000,"25% down payment, 24 monthly installments"
+P003-PP-03,P003,60-Month Plan,15,60,189000000,"8% premium, 5-year plan for family buyers"
+P004-PP-01,P004,Spot Cash,100,0,71250000,5% discount on spot cash
+P004-PP-02,P004,24-Month Plan,25,24,75000000,"25% down payment, 24 monthly installments"
+P004-PP-03,P004,60-Month Plan,15,60,81000000,"8% premium, 5-year plan for family buyers"
+P005-PP-01,P005,100% Lump Sum,100,0,13775000,5% discount on lump sum
+P005-PP-02,P005,12-Month Installment Plan,25,12,14500000,"25% down payment, balance over 12 months"
+P006-PP-01,P006,Spot Cash,100,0,209000000,5% discount on spot cash
+P006-PP-02,P006,24-Month Plan,25,24,220000000,"25% down payment, 24 monthly installments"
+P006-PP-03,P006,60-Month Plan,15,60,237600000,"8% premium, 5-year plan for family buyers"
+P007-PP-01,P007,Spot Cash,100,0,26600000,5% discount on spot cash
+P007-PP-02,P007,24-Month Plan,25,24,28000000,"25% down payment, 24 monthly installments"
+P007-PP-03,P007,60-Month Plan,15,60,30240000,"8% premium, 5-year plan for family buyers"
+P008-PP-01,P008,Spot Cash,100,0,45600000,5% discount on spot cash
+P008-PP-02,P008,24-Month Plan,25,24,48000000,"25% down payment, 24 monthly installments"
+P008-PP-03,P008,60-Month Plan,15,60,51840000,"8% premium, 5-year plan for family buyers"
+P009-PP-01,P009,Spot Cash,100,0,13340000,8% discount on spot cash
+P009-PP-02,P009,24-Month Plan,30,24,14500000,"30% down payment, 24 monthly installments"
+P009-PP-03,P009,36-Month Plan,20,36,15225000,"5% premium, lower down payment"
+P010-PP-01,P010,Spot Cash,100,0,61750000,5% discount on spot cash
+P010-PP-02,P010,24-Month Plan,25,24,65000000,"25% down payment, 24 monthly installments"
+P010-PP-03,P010,60-Month Plan,15,60,70200000,"8% premium, 5-year plan for family buyers"
+P011-PP-01,P011,Spot Cash,100,0,171000000,5% discount on spot cash
+P011-PP-02,P011,24-Month Plan,25,24,180000000,"25% down payment, 24 monthly installments"
+P011-PP-03,P011,60-Month Plan,15,60,194400000,"8% premium, 5-year plan for family buyers"
+P012-PP-01,P012,Spot Cash,100,0,17575000,5% discount on spot cash
+P012-PP-02,P012,24-Month Plan,25,24,18500000,"25% down payment, 24 monthly installments"
+P012-PP-03,P012,60-Month Plan,15,60,19980000,"8% premium, 5-year plan for family buyers"
+P013-PP-01,P013,Spot Cash,100,0,11500000,8% discount on spot cash
+P013-PP-02,P013,24-Month Plan,30,24,12500000,"30% down payment, 24 monthly installments"
+P013-PP-03,P013,36-Month Plan,20,36,13125000,"5% premium, lower down payment"
+P014-PP-01,P014,Spot Cash,100,0,52250000,5% discount on spot cash
+P014-PP-02,P014,24-Month Plan,25,24,55000000,"25% down payment, 24 monthly installments"
+P014-PP-03,P014,60-Month Plan,15,60,59400000,"8% premium, 5-year plan for family buyers"
+P015-PP-01,P015,Spot Cash,100,0,228000000,5% discount on spot cash
+P015-PP-02,P015,24-Month Plan,25,24,240000000,"25% down payment, 24 monthly installments"
+P015-PP-03,P015,60-Month Plan,15,60,259200000,"8% premium, 5-year plan for family buyers"
+P016-PP-01,P016,Spot Cash,100,0,33250000,5% discount on spot cash
+P016-PP-02,P016,24-Month Plan,25,24,35000000,"25% down payment, 24 monthly installments"
+P016-PP-03,P016,60-Month Plan,15,60,37800000,"8% premium, 5-year plan for family buyers"
+P017-PP-01,P017,Spot Cash,100,0,71250000,5% discount on spot cash
+P017-PP-02,P017,24-Month Plan,25,24,75000000,"25% down payment, 24 monthly installments"
+P017-PP-03,P017,60-Month Plan,15,60,81000000,"8% premium, 5-year plan for family buyers"
+P018-PP-01,P018,Spot Cash,100,0,209000000,5% discount on spot cash
+P018-PP-02,P018,24-Month Plan,25,24,220000000,"25% down payment, 24 monthly installments"
+P018-PP-03,P018,60-Month Plan,15,60,237600000,"8% premium, 5-year plan for family buyers"
+P019-PP-01,P019,Spot Cash,100,0,15180000,8% discount on spot cash
+P019-PP-02,P019,24-Month Plan,30,24,16500000,"30% down payment, 24 monthly installments"
+P019-PP-03,P019,36-Month Plan,20,36,17325000,"5% premium, lower down payment"
+P020-PP-01,P020,Spot Cash,100,0,90250000,5% discount on spot cash
+P020-PP-02,P020,24-Month Plan,25,24,95000000,"25% down payment, 24 monthly installments"
+P020-PP-03,P020,60-Month Plan,15,60,102600000,"8% premium, 5-year plan for family buyers"
+P021-PP-01,P021,Spot Cash,100,0,17020000,8% discount on spot cash
+P021-PP-02,P021,24-Month Plan,30,24,18500000,"30% down payment, 24 monthly installments"
+P021-PP-03,P021,36-Month Plan,20,36,19425000,"5% premium, lower down payment"
+P022-PP-01,P022,Spot Cash,100,0,114000000,5% discount on spot cash
+P022-PP-02,P022,24-Month Plan,25,24,120000000,"25% down payment, 24 monthly installments"
+P022-PP-03,P022,60-Month Plan,15,60,129600000,"8% premium, 5-year plan for family buyers"
+P023-PP-01,P023,Spot Cash,100,0,80750000,5% discount on spot cash
+P023-PP-02,P023,24-Month Plan,25,24,85000000,"25% down payment, 24 monthly installments"
+P023-PP-03,P023,60-Month Plan,15,60,91800000,"8% premium, 5-year plan for family buyers"
+P024-PP-01,P024,Spot Cash,100,0,40375000,5% discount on spot cash
+P024-PP-02,P024,24-Month Plan,25,24,42500000,"25% down payment, 24 monthly installments"
+P024-PP-03,P024,60-Month Plan,15,60,45900000,"8% premium, 5-year plan for family buyers"
+P025-PP-01,P025,Spot Cash,100,0,137750000,5% discount on spot cash
+P025-PP-02,P025,24-Month Plan,25,24,145000000,"25% down payment, 24 monthly installments"
+P025-PP-03,P025,60-Month Plan,15,60,156600000,"8% premium, 5-year plan for family buyers"
+P026-PP-01,P026,Spot Cash,100,0,304000000,5% discount on spot cash
+P026-PP-02,P026,24-Month Plan,25,24,320000000,"25% down payment, 24 monthly installments"
+P026-PP-03,P026,60-Month Plan,15,60,345600000,"8% premium, 5-year plan for family buyers"
+P027-PP-01,P027,Spot Cash,100,0,74100000,5% discount on spot cash
+P027-PP-02,P027,24-Month Plan,25,24,78000000,"25% down payment, 24 monthly installments"
+P027-PP-03,P027,60-Month Plan,15,60,84240000,"8% premium, 5-year plan for family buyers"
+P028-PP-01,P028,Spot Cash,100,0,27075000,5% discount on spot cash
+P028-PP-02,P028,24-Month Plan,25,24,28500000,"25% down payment, 24 monthly installments"
+P028-PP-03,P028,60-Month Plan,15,60,30780000,"8% premium, 5-year plan for family buyers"
+P029-PP-01,P029,Spot Cash,100,0,8740000,8% discount on spot cash
+P029-PP-02,P029,24-Month Plan,30,24,9500000,"30% down payment, 24 monthly installments"
+P029-PP-03,P029,36-Month Plan,20,36,9975000,"5% premium, lower down payment"
+P030-PP-01,P030,Spot Cash,100,0,36100000,5% discount on spot cash
+P030-PP-02,P030,24-Month Plan,25,24,38000000,"25% down payment, 24 monthly installments"
+P030-PP-03,P030,60-Month Plan,15,60,41040000,"8% premium, 5-year plan for family buyers"
+P031-PP-01,P031,Spot Cash,100,0,17575000,5% discount on spot cash
+P031-PP-02,P031,24-Month Plan,25,24,18500000,"25% down payment, 24 monthly installments"
+P031-PP-03,P031,60-Month Plan,15,60,19980000,"8% premium, 5-year plan for family buyers"
+P032-PP-01,P032,Spot Cash,100,0,185250000,5% discount on spot cash
+P032-PP-02,P032,24-Month Plan,25,24,195000000,"25% down payment, 24 monthly installments"
+P032-PP-03,P032,60-Month Plan,15,60,210600000,"8% premium, 5-year plan for family buyers"
+P033-PP-01,P033,Spot Cash,100,0,26220000,8% discount on spot cash
+P033-PP-02,P033,24-Month Plan,30,24,28500000,"30% down payment, 24 monthly installments"
+P033-PP-03,P033,36-Month Plan,20,36,29925000,"5% premium, lower down payment"
+P034-PP-01,P034,Spot Cash,100,0,38640000,8% discount on spot cash
+P034-PP-02,P034,24-Month Plan,30,24,42000000,"30% down payment, 24 monthly installments"
+P034-PP-03,P034,36-Month Plan,20,36,44100000,"5% premium, lower down payment"
+P035-PP-01,P035,Spot Cash,100,0,33250000,5% discount on spot cash
+P035-PP-02,P035,24-Month Plan,25,24,35000000,"25% down payment, 24 monthly installments"
+P035-PP-03,P035,60-Month Plan,15,60,37800000,"8% premium, 5-year plan for family buyers"
+P036-PP-01,P036,Spot Cash,100,0,11875000,5% discount on spot cash
+P036-PP-02,P036,24-Month Plan,25,24,12500000,"25% down payment, 24 monthly installments"
+P036-PP-03,P036,60-Month Plan,15,60,13500000,"8% premium, 5-year plan for family buyers"
+P037-PP-01,P037,Spot Cash,100,0,21375000,5% discount on spot cash
+P037-PP-02,P037,24-Month Plan,25,24,22500000,"25% down payment, 24 monthly installments"
+P037-PP-03,P037,60-Month Plan,15,60,24300000,"8% premium, 5-year plan for family buyers"
+P038-PP-01,P038,Spot Cash,100,0,10580000,8% discount on spot cash
+P038-PP-02,P038,24-Month Plan,30,24,11500000,"30% down payment, 24 monthly installments"
+P038-PP-03,P038,36-Month Plan,20,36,12075000,"5% premium, lower down payment"
+P039-PP-01,P039,Spot Cash,100,0,21375000,5% discount on spot cash
+P039-PP-02,P039,24-Month Plan,25,24,22500000,"25% down payment, 24 monthly installments"
+P039-PP-03,P039,60-Month Plan,15,60,24300000,"8% premium, 5-year plan for family buyers"
+P040-PP-01,P040,Spot Cash,100,0,36575000,5% discount on spot cash
+P040-PP-02,P040,24-Month Plan,25,24,38500000,"25% down payment, 24 monthly installments"
+P040-PP-03,P040,60-Month Plan,15,60,41580000,"8% premium, 5-year plan for family buyers"
+P041-PP-01,P041,Spot Cash,100,0,156750000,5% discount on spot cash
+P041-PP-02,P041,24-Month Plan,25,24,165000000,"25% down payment, 24 monthly installments"
+P041-PP-03,P041,60-Month Plan,15,60,178200000,"8% premium, 5-year plan for family buyers"
+P042-PP-01,P042,Spot Cash,100,0,13775000,5% discount on spot cash
+P042-PP-02,P042,24-Month Plan,25,24,14500000,"25% down payment, 24 monthly installments"
+P042-PP-03,P042,60-Month Plan,15,60,15660000,"8% premium, 5-year plan for family buyers"

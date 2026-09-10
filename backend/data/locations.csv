@@ -1,0 +1,38 @@
+location_id,name,city,area,area_type
+L001,DHA Phase 6,Lahore,Lahore Cantonment,Sector
+L002,DHA Phase 7,Lahore,Lahore Cantonment,Sector
+L003,DHA Phase 9 Prism,Lahore,Lahore Cantonment,Sector
+L004,Bahria Town Lahore,Lahore,Lahore Ring Road,Sector
+L005,Lake City Lahore,Lahore,Raiwind Road,Sector
+L006,Eden Housing,Lahore,Ferozepur Road,Sector
+L007,Gulberg,Lahore,Central Lahore,Sector
+L008,Johar Town,Lahore,Lahore,Sector
+L009,Model Town,Lahore,Lahore,Sector
+L010,Wapda Town,Lahore,Lahore,Sector
+L011,Sector G-11,Islamabad,Islamabad,Sector
+L012,Sector F-11,Islamabad,Islamabad,Sector
+L013,Sector I-8,Islamabad,Islamabad,Sector
+L014,Sector D-12,Islamabad,Islamabad,Sector
+L015,Capital Smart City,Islamabad,M-2 Motorway,Project
+L016,Bahria Town Islamabad Phase 7,Islamabad,Islamabad Highway,Sector
+L017,Bahria Enclave,Islamabad,Kuri Road,Sector
+L018,Faisal Hills,Islamabad,Margalla Hills,Sector
+L019,Gulberg Greens,Islamabad,Islamabad Expressway,Sector
+L020,Park View City,Islamabad,Park Road,Sector
+L021,B-17 Multi Gardens,Islamabad,Margalla Avenue,Sector
+L022,Bahria Town Karachi Precinct 23,Karachi,M-9 Motorway,Precinct
+L023,DHA City Karachi Sector 3,Karachi,M-9 Motorway,Sector
+L024,DHA Karachi Phase 6,Karachi,DHA Karachi,Phase
+L025,Crescent Bay,Karachi,Clifton,Project
+L026,Clifton,Karachi,Clifton Cantonment,Sector
+L027,Gulistan-e-Johar,Karachi,Karachi,Sector
+L028,Bahadurabad,Karachi,Karachi,Sector
+L029,Wapda City Faisalabad,Faisalabad,Faisalabad,Sector
+L030,Sahasra Town,Faisalabad,Jhang Road,Sector
+L031,Sitara Valley,Faisalabad,Faisalabad,Sector
+L032,Eden Garden Faisalabad,Faisalabad,Faisalabad,Sector
+L033,Bahria Town Phase 8,Rawalpindi,Rawalpindi,Phase
+L034,Bahria Town Phase 4,Rawalpindi,Rawalpindi,Phase
+L035,DHA Rawalpindi Phase 2,Rawalpindi,Rawalpindi,Phase
+L036,PWD Housing Society,Rawalpindi,Rawalpindi,Sector
+L037,Capital Smart City Rawalpindi,Rawalpindi,M-2 Motorway,Project

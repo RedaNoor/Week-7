@@ -1,55 +1,45 @@
-# Python bytecode and caches
+# Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
-
-# Virtual environments
-.venv/
+*.so
+.Python
 venv/
 env/
+ENV/
+.pytest_cache/
+*.egg-info/
 
-# Environment files
+# Node
+node_modules/
+.next/
+out/
+build/
+
+# Environment
 .env
-.env.*
+.env.local
+.env.*.local
 
-# IDE/editor settings
+# Database
+*.db
+*.sqlite3
+
+# Runtime data
+backend/app/data/conversation_memory.json
+backend/app/data/conversation_model.pkl
+backend/app/data/call_history.json
+backend/app/data/lead_memory.json
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# Logs and runtime artifacts
-*.log
-*.tmp
-*.bak
-
-# Python packaging
-build/
-dist/
-*.egg-info/
-.eggs/
-
-# Test / coverage output
-.pytest_cache/
-.coverage
-.coverage.*
-htmlcov/
-
-# Database / local data
-*.sqlite3
-*.db
-
-# Local app generated data
-app/data/*.json
-!app/data/crm_log.json
-
-# Jupyter
-.ipynb_checkpoints/
-
-# Node / frontend tooling if present
-node_modules/
