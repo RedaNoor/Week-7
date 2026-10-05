@@ -90,11 +90,36 @@ def _normalize_row(row: Dict[str, str], *, raw_dataset: bool) -> Dict[str, Any]:
 
 
 def _load_catalog() -> List[Dict[str, Any]]:
-    uploaded_path = WORKSPACE_ROOT / "dataset_properties.csv"
-    catalog_path = uploaded_path if uploaded_path.exists() else ROOT / "data" / "properties.csv"
-    raw_dataset = catalog_path == uploaded_path
-    if not catalog_path.exists():
-        logger.warning(f"Property dataset not found at {catalog_path}")
+    candidate_datasets = [
+        WORKSPACE_ROOT / "dataset_properties.csv",
+        ROOT / "dataset_properties.csv",
+        Path.cwd() / "dataset_properties.csv",
+        ROOT / "data" / "dataset_properties.csv",
+        Path(__file__).resolve().parents[3] / "dataset_properties.csv",
+    ]
+    
+    catalog_path = None
+    raw_dataset = False
+    for candidate in candidate_datasets:
+        if candidate.exists():
+            catalog_path = candidate
+            raw_dataset = True
+            break
+            
+    if not catalog_path:
+        fallback_candidates = [
+            ROOT / "data" / "properties.csv",
+            WORKSPACE_ROOT / "backend" / "data" / "properties.csv",
+            Path.cwd() / "backend" / "data" / "properties.csv",
+        ]
+        for fallback in fallback_candidates:
+            if fallback.exists():
+                catalog_path = fallback
+                raw_dataset = False
+                break
+
+    if not catalog_path or not catalog_path.exists():
+        logger.warning("Property dataset not found at any candidate path")
         return []
 
     items: List[Dict[str, Any]] = []

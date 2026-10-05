@@ -481,7 +481,7 @@ function HomeContent() {
             </div>
             <div className="flex flex-wrap gap-6">
               {[
-                { label: "Verified Properties", value: propertyTotal > 0 ? propertyTotal.toLocaleString() : "42+" },
+                { label: "Verified Properties", value: propertyTotal > 0 ? propertyTotal.toLocaleString() : "168,000+" },
                 { label: "Cities Covered", value: "5" },
                 { label: "Avg. Response Time", value: "< 2 min" },
               ].map((stat) => (
