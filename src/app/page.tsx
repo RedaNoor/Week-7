@@ -386,7 +386,7 @@ function HomeContent() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-emerald-50/20">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b glass">
+      <header className="sticky top-0 z-50 border-b bg-white shadow-xs">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
