@@ -1,0 +1,11 @@
+.git
+.github
+backend/venv
+node_modules
+.next
+__pycache__
+*.pyc
+backend/data/ml_prediction_log.jsonl
+backend/data/week8/evaluation
+backend/data/week8/monitoring
+backend/data/week8/models

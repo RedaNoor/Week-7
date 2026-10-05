@@ -42,6 +42,8 @@ import {
   ShieldCheck,
   PhoneCall,
   Volume2,
+  BarChart3,
+  ExternalLink,
 } from "lucide-react";
 
 // ============================================================================
@@ -160,6 +162,7 @@ function HomeContent() {
   const { toast } = useToast();
   const [loginModalOpen, setLoginModalOpen] = useState(false);
   const [properties, setProperties] = useState<Property[]>([]);
+  const [propertyTotal, setPropertyTotal] = useState(0);
   const [loadingProps, setLoadingProps] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [cityFilter, setCityFilter] = useState("all");
@@ -198,8 +201,9 @@ function HomeContent() {
   const loadProperties = useCallback(async () => {
     setLoadingProps(true);
     try {
-      const data = await api<{ properties: Property[] }>("/properties");
+      const data = await api<{ properties: Property[]; total: number }>("/properties");
       setProperties(data.properties || []);
+      setPropertyTotal(data.total || data.properties?.length || 0);
     } catch (e) {
       toast({
         title: "Could not load properties",
@@ -380,9 +384,9 @@ function HomeContent() {
   const types = Array.from(new Set(properties.map((p) => p.type)));
 
   return (
-    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-emerald-50/30">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-slate-50 via-white to-emerald-50/20">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b bg-white/80 backdrop-blur-md">
+      <header className="sticky top-0 z-40 border-b glass">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-md">
@@ -393,7 +397,18 @@ function HomeContent() {
               <p className="text-xs text-slate-500">Premier Property Advisory & Consultation</p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <a
+              href={process.env.NEXT_PUBLIC_STREAMLIT_URL || "http://localhost:8501"}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors shadow-sm"
+              title="Open Machine Learning Analytics & Lead Scoring Dashboard"
+            >
+              <BarChart3 className="h-3.5 w-3.5 text-emerald-600" />
+              <span className="hidden sm:inline">ML Dashboard</span>
+              <ExternalLink className="h-3 w-3 opacity-60" />
+            </a>
             {user ? (
               <div className="flex items-center gap-2">
                 <Badge
@@ -437,34 +452,39 @@ function HomeContent() {
       <LoginModal isOpen={loginModalOpen} onOpenChange={setLoginModalOpen} />
 
       {/* Hero */}
-      <section className="border-b bg-gradient-to-br from-emerald-600 via-teal-600 to-cyan-700 text-white">
-        <div className="container mx-auto px-4 py-12 md:py-16">
-          <div className="max-w-3xl">
-            <Badge variant="secondary" className="mb-3 bg-white/20 text-white border-white/20">
-              Verified Real Estate Consultancy
+      <section className="relative overflow-hidden border-b">
+        <div className="absolute inset-0 brand-gradient opacity-95" />
+        <div className="absolute inset-0" style={{backgroundImage: "radial-gradient(ellipse at 70% 50%, rgba(255,255,255,0.08) 0%, transparent 60%)"}} />
+        <div className="relative container mx-auto px-4 py-12 md:py-18">
+          <div className="max-w-4xl">
+            <Badge variant="secondary" className="mb-4 bg-white/20 text-white border-white/25 backdrop-blur-sm">
+              <Sparkles className="h-3 w-3 mr-1.5" />
+              AI-Powered Real Estate Consultancy
             </Badge>
-            <h2 className="text-3xl md:text-5xl font-bold leading-tight mb-3">
+            <h2 className="text-3xl md:text-5xl font-bold leading-tight mb-4 text-white">
               Find your dream home in Pakistan&apos;s most prestigious locations.
             </h2>
-            <p className="text-white/90 text-base md:text-lg mb-6">
-              Explore verified luxury houses, modern apartments, and prime plots across Lahore, Karachi, and Islamabad with personalized guidance.
+            <p className="text-white/85 text-base md:text-lg mb-7 max-w-2xl">
+              Explore verified luxury houses, modern apartments, and prime plots across Lahore, Karachi, and Islamabad — with AI guidance in Roman Urdu or English.
             </p>
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="secondary" className="bg-white/15 text-white border-white/20">
-                DHA Lahore &amp; Karachi
-              </Badge>
-              <Badge variant="secondary" className="bg-white/15 text-white border-white/20">
-                Bahria Town
-              </Badge>
-              <Badge variant="secondary" className="bg-white/15 text-white border-white/20">
-                Gulberg &amp; Blue Area
-              </Badge>
-              <Badge variant="secondary" className="bg-white/15 text-white border-white/20">
-                Verified Listings
-              </Badge>
-              <Badge variant="secondary" className="bg-white/15 text-white border-white/20">
-                Site Visit Booking
-              </Badge>
+            <div className="flex flex-wrap gap-2 mb-8">
+              {["DHA Lahore & Karachi", "Bahria Town", "Gulberg & Blue Area", "Verified Listings", "Site Visit Booking"].map((tag) => (
+                <Badge key={tag} variant="secondary" className="bg-white/15 text-white border-white/20 hover:bg-white/25 transition-colors cursor-default">
+                  {tag}
+                </Badge>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-6">
+              {[
+                { label: "Verified Properties", value: propertyTotal > 0 ? propertyTotal.toLocaleString() : "42+" },
+                { label: "Cities Covered", value: "5" },
+                { label: "Avg. Response Time", value: "< 2 min" },
+              ].map((stat) => (
+                <div key={stat.label} className="bg-white/10 backdrop-blur-sm rounded-xl px-5 py-3 border border-white/15">
+                  <div className="text-2xl font-bold text-white">{stat.value}</div>
+                  <div className="text-xs text-white/75">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -533,19 +553,28 @@ function HomeContent() {
             </div>
 
             <div className="text-sm text-slate-500">
-              Showing {filteredProperties.length} of {properties.length} properties
+              Showing {filteredProperties.length} of {propertyTotal.toLocaleString()} properties
             </div>
 
             {loadingProps ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <Card key={i} className="p-6 h-64 animate-pulse bg-slate-100" />
+                  <Card key={i} className="p-0 h-64 overflow-hidden">
+                    <div className="h-36 shimmer" />
+                    <div className="p-4 space-y-2">
+                      <div className="h-3 shimmer rounded w-3/4" />
+                      <div className="h-3 shimmer rounded w-1/2" />
+                      <div className="h-5 shimmer rounded w-2/3" />
+                    </div>
+                  </Card>
                 ))}
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {filteredProperties.map((p) => (
-                  <PropertyCard key={p.property_id} property={p} />
+                {filteredProperties.map((p, i) => (
+                  <div key={p.property_id} className="animate-slide-up" style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}>
+                    <PropertyCard property={p} />
+                  </div>
                 ))}
               </div>
             )}
@@ -767,7 +796,7 @@ function HomeContent() {
               </span>
             </div>
             <div className="text-xs text-slate-500">
-              {properties.length} Verified Properties · Prime Locations · Pakistan
+              {propertyTotal.toLocaleString()} Verified Properties · Prime Locations · Pakistan
             </div>
           </div>
         </div>
@@ -779,61 +808,79 @@ function HomeContent() {
 // ============================================================================
 // Sub-components
 // ============================================================================
+// Colour palette for property cards
+const CARD_GRADIENTS = [
+  "from-emerald-500 via-teal-500 to-cyan-600",
+  "from-teal-500 via-cyan-500 to-blue-500",
+  "from-green-500 via-emerald-500 to-teal-500",
+  "from-cyan-500 via-teal-500 to-emerald-500",
+];
+
 function PropertyCard({ property: p }: { property: Property }) {
   const [expanded, setExpanded] = useState(false);
+  const gradIdx = Math.abs(p.property_id.charCodeAt(0) + p.property_id.charCodeAt(1)) % CARD_GRADIENTS.length;
+  const grad = CARD_GRADIENTS[gradIdx];
+
   return (
-    <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-      <div className="h-32 bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600 relative">
-        <div className="absolute top-2 right-2 flex gap-1">
-          <Badge
-            variant="secondary"
-            className="bg-white/90 text-slate-700 text-xs capitalize"
-          >
+    <Card className="overflow-hidden card-hover border border-slate-100 shadow-sm">
+      {/* Card image / header */}
+      <div className={`h-36 bg-gradient-to-br ${grad} relative overflow-hidden`}>
+        {/* Subtle shine overlay */}
+        <div className="absolute inset-0" style={{backgroundImage: "radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.15) 0%, transparent 60%)"}} />
+        <div className="absolute top-2.5 right-2.5 flex gap-1.5">
+          <Badge className="bg-white/90 text-slate-700 text-xs capitalize shadow-sm border-0">
             {p.status}
           </Badge>
         </div>
-        <div className="absolute bottom-2 left-3 text-white">
-          <div className="text-xs opacity-90">{p.developer}</div>
-          <div className="text-lg font-bold">{p.name}</div>
+        <div className="absolute bottom-3 left-3 right-3 text-white">
+          <div className="text-xs font-medium opacity-80 mb-0.5">{p.developer}</div>
+          <div className="text-base font-bold leading-tight truncate">{p.name}</div>
         </div>
       </div>
-      <div className="p-4 space-y-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-1 text-sm text-slate-600">
-            <MapPin className="h-3 w-3" />
+
+      {/* Card body */}
+      <div className="p-4 space-y-3">
+        <div className="flex items-center justify-between text-sm text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <MapPin className="h-3.5 w-3.5 text-emerald-500" />
             {p.area}, {p.city}
-          </div>
-          <div className="flex items-center gap-1 text-sm text-slate-600">
-            <Bed className="h-3 w-3" />
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Bed className="h-3.5 w-3.5 text-emerald-500" />
             {p.bedrooms} beds
-          </div>
+          </span>
         </div>
-        <div className="flex items-center gap-1 text-lg font-bold text-emerald-700">
-          <Tag className="h-4 w-4" />
-          {formatPrice(p.price)}
+
+        <div className="flex items-center gap-1.5">
+          <Tag className="h-4 w-4 text-emerald-600" />
+          <span className="text-lg font-bold gradient-text">{formatPrice(p.price)}</span>
         </div>
-        <div className="flex items-center gap-2 pt-1">
-          <Badge variant="outline" className="text-xs">
+
+        <div className="flex items-center gap-2 flex-wrap">
+          <Badge variant="secondary" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-100">
             {p.type}
           </Badge>
           <Badge variant="outline" className="text-xs capitalize">
             {p.purpose.toLowerCase()}
           </Badge>
         </div>
+
         {p.brochure && (
           <>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
-              className="w-full mt-2 text-xs"
+              className="w-full text-xs h-8 border-emerald-200 text-emerald-700 hover:bg-emerald-50"
               onClick={() => setExpanded(!expanded)}
             >
-              {expanded ? "Hide details" : "View brochure"}
+              {expanded ? "Hide details" : "View brochure & details"}
             </Button>
             {expanded && (
-              <div className="text-xs text-slate-600 max-h-40 overflow-y-auto bg-slate-50 p-2 rounded">
+              <div className="text-xs text-slate-600 max-h-40 overflow-y-auto bg-slate-50/80 p-3 rounded-lg border border-slate-100">
                 {p.brochure.slice(0, 500)}
-                {p.brochure.length > 500 && "..."}
+                {p.brochure.length > 500 && (
+                  <span className="text-slate-400"> ...more</span>
+                )}
               </div>
             )}
           </>

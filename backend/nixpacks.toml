@@ -1,0 +1,12 @@
+# nixpacks.toml — Build config for Railway (FastAPI backend service)
+# Place this file inside the `backend/` directory when creating
+# a separate Railway service for the backend.
+
+[phases.setup]
+nixPkgs = ["python312", "gcc", "libffi", "openssl"]
+
+[phases.install]
+cmds = ["pip install --no-cache-dir -r requirements.txt"]
+
+[start]
+cmd = "uvicorn app.main:app --host 0.0.0.0 --port $PORT"

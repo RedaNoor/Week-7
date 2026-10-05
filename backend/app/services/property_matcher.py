@@ -1,12 +1,13 @@
 """
 Property catalog loader and matcher.
 
-Loads the property catalog from `data/properties.csv` and exposes:
+Loads the property catalog from the uploaded `dataset_properties.csv` when it
+is available and exposes:
 - PROPERTY_CATALOG: the full list (loaded at import time)
 - match_properties(profile): returns up to 3 properties matching the
   customer's stated budget / city / area / property type / purpose
 
-The CSV schema is:
+The normalized catalog shape is:
     property_id, name, developer, city, area, type,
     bedrooms, size_sqft, size_marla, price, status, purpose
 """
@@ -22,56 +23,88 @@ logger = logging.getLogger("property_matcher")
 
 # parents[0] = app/services, parents[1] = app, parents[2] = project root
 ROOT = Path(__file__).resolve().parents[2]
+WORKSPACE_ROOT = ROOT.parent
 PROPERTY_CATALOG: List[Dict[str, Any]] = []
 
 
+def _as_float(value: Any, default: float = 0.0) -> float:
+    try:
+        return float(str(value or "").replace(",", "").strip())
+    except (TypeError, ValueError):
+        return default
+
+
+def _as_int(value: Any, default: int = 0) -> int:
+    try:
+        return int(float(str(value or "").replace(",", "").strip()))
+    except (TypeError, ValueError):
+        return default
+
+
+def _normalize_row(row: Dict[str, str], *, raw_dataset: bool) -> Dict[str, Any]:
+    if raw_dataset:
+        area_marla = _as_float(row.get("Area Size"))
+        area_type = (row.get("Area Type") or "Marla").lower()
+        if "kanal" in area_type:
+            area_marla *= 20
+        elif "sq" in area_type or "feet" in area_type:
+            area_marla /= 272.25
+        property_type = row.get("property_type") or "Unknown"
+        location = row.get("location") or "Unknown"
+        city = row.get("city") or "Unknown"
+        return {
+            "property_id": row.get("property_id", ""),
+            "name": f"{property_type} in {location}, {city}",
+            "developer": row.get("agency") or "Independent Listing",
+            "city": city,
+            "area": location,
+            "type": property_type,
+            "bedrooms": _as_int(row.get("bedrooms")),
+            "bathrooms": _as_int(row.get("baths")),
+            "size_sqft": round(area_marla * 272.25),
+            "size_marla": area_marla,
+            "price": _as_int(row.get("price")),
+            "status": "Available",
+            "purpose": row.get("purpose") or "For Sale",
+            "province_name": row.get("province_name") or "",
+            "latitude": _as_float(row.get("latitude")),
+            "longitude": _as_float(row.get("longitude")),
+            "source_url": row.get("page_url") or "",
+        }
+
+    return {
+        "property_id": row.get("property_id", ""),
+        "name": row.get("name", ""),
+        "developer": row.get("developer", ""),
+        "city": row.get("city", ""),
+        "area": row.get("area", ""),
+        "type": row.get("type", ""),
+        "bedrooms": _as_int(row.get("bedrooms")),
+        "bathrooms": _as_int(row.get("bathrooms")),
+        "size_sqft": _as_int(row.get("size_sqft")),
+        "size_marla": _as_float(row.get("size_marla")),
+        "price": _as_int(row.get("price")),
+        "status": row.get("status", "Available"),
+        "purpose": row.get("purpose", "Family"),
+    }
+
+
 def _load_catalog() -> List[Dict[str, Any]]:
-    catalog_path = ROOT / "data" / "properties.csv"
+    uploaded_path = WORKSPACE_ROOT / "dataset_properties.csv"
+    catalog_path = uploaded_path if uploaded_path.exists() else ROOT / "data" / "properties.csv"
+    raw_dataset = catalog_path == uploaded_path
     if not catalog_path.exists():
-        logger.warning(f"properties.csv not found at {catalog_path}")
+        logger.warning(f"Property dataset not found at {catalog_path}")
         return []
 
     items: List[Dict[str, Any]] = []
     with catalog_path.open("r", encoding="utf-8", newline="") as csv_file:
         reader = csv.DictReader(csv_file)
         for row in reader:
-            price_raw = (row.get("price") or "0").replace(",", "")
-            try:
-                price = int(float(price_raw))
-            except ValueError:
-                price = 0
-
-            try:
-                beds = int(row.get("bedrooms") or 0)
-            except ValueError:
-                beds = 0
-
-            try:
-                size_sqft = int(float(row.get("size_sqft") or 0))
-            except ValueError:
-                size_sqft = 0
-
-            try:
-                size_marla = float(row.get("size_marla") or 0)
-            except ValueError:
-                size_marla = 0.0
-
-            property_item = {
-                "property_id": row.get("property_id", ""),
-                "name": row.get("name", ""),
-                "developer": row.get("developer", ""),
-                "city": row.get("city", ""),
-                "area": row.get("area", ""),
-                "type": row.get("type", ""),
-                "bedrooms": beds,
-                "size_sqft": size_sqft,
-                "size_marla": size_marla,
-                "price": price,
-                "status": row.get("status", "Available"),
-                "purpose": row.get("purpose", "Family"),
-            }
-            items.append(property_item)
-    logger.info(f"Loaded {len(items)} properties from catalog")
+            property_item = _normalize_row(row, raw_dataset=raw_dataset)
+            if property_item["property_id"] and property_item["price"] > 0:
+                items.append(property_item)
+    logger.info("Loaded %s properties from %s", len(items), catalog_path.name)
     return items
 
 

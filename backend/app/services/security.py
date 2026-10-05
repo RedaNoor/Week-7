@@ -126,11 +126,11 @@ def sanitize_text(value: Optional[str], max_length: int = 8000) -> str:
 
 
 def sanitize_property_id(value: Optional[str]) -> Optional[str]:
-    """Validate property ID format (e.g. P001, P027)."""
+    """Validate curated P IDs and numeric IDs from the uploaded dataset."""
     if not value:
         return None
     v = str(value).strip().upper()
-    if not re.match(r"^[Pp]\d{3}$", v):
+    if not re.match(r"^(?:[Pp]\d{3}|\d{1,20})$", v):
         return None
     return v
 

@@ -19,6 +19,8 @@ from app.services.call_history import record_call
 from app.services.lead_memory import extract_profile
 from app.services.appointment_service import create_appointment, AppointmentCreate
 from app.services.property_matcher import search_properties
+from app.services.ml_service import models as week8_models
+from app.services.email_service import send_agent_notification
 
 logger = logging.getLogger("vapi_service")
 logger.setLevel(logging.INFO)
@@ -184,9 +186,36 @@ def _handle_end_of_call(message: Dict[str, Any], call_obj: Dict[str, Any]) -> Di
     except Exception as e:
         logger.warning(f"Lead profile extraction failed for Vapi call: {e}")
 
+    # Score every completed voice call. Missing CRM fields use conservative
+    # defaults until the lead profile is enriched by a later interaction.
+    lead_score = None
+    try:
+        lead_score = week8_models.score_lead({
+            "source": "call",
+            "budget_pkr": 0,
+            "preferred_city": "Lahore",
+            "purpose": "buy",
+            "number_of_calls": 1,
+            "call_duration_seconds": duration,
+            "response_time_minutes": 0,
+            "visit_booked": int("visit" in transcript.lower()),
+            "days_since_first_contact": 0,
+            "objection_raised": "none",
+        })
+        if lead_score.get("segment") == "Hot" and email:
+            send_agent_notification(
+                agent_email=email,
+                subject="Hot real-estate lead requires follow-up",
+                notification_type="hot_lead",
+                data={"phone": phone, "score": lead_score, "call_id": call_entry.get("call_id")},
+            )
+    except Exception as e:
+        logger.warning(f"Lead scoring failed for Vapi call: {e}")
+
     logger.info(f"Successfully processed Vapi end-of-call report for {phone}")
     return {
         "status": "success",
         "call_id": call_entry.get("call_id"),
-        "phone": phone
+        "phone": phone,
+        "lead_score": lead_score,
     }

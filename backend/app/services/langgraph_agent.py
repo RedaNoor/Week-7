@@ -32,8 +32,10 @@ from app.services.n8n_webhook import n8n_publisher
 from app.services.appointment_service import create_appointment_record
 from app.services.calendar_service import create_calendar_event
 from app.services.email_service import send_booking_email
+from app.services.email_service import send_agent_notification
 from app.services.crm_service import log_call_and_booking, create_crm_contact
 from app.services.conversation_learning import learner as conversation_learner
+from app.services.ml_service import models as week8_models
 
 
 class AgentState(TypedDict, total=False):
@@ -387,6 +389,32 @@ def get_lead_memory_context(lead_id: str) -> dict:
     return lead_memory.get_lead(lead_id) or {"lead_id": lead_id, "status": "new_lead"}
 
 
+@tool("predict_fair_property_price")
+def predict_fair_property_price(property_data: dict) -> dict:
+    """Return a model-backed fair price range; never estimate prices in prose."""
+    try:
+        return week8_models.predict_price(property_data)
+    except (TypeError, ValueError) as error:
+        return {"status": "validation_error", "error": str(error)}
+
+
+@tool("score_sales_lead")
+def score_sales_lead(lead_data: dict, notify_email: Optional[str] = None) -> dict:
+    """Score a lead and optionally notify an employee when the lead is Hot."""
+    try:
+        result = week8_models.score_lead(lead_data)
+        if result.get("segment") == "Hot" and notify_email:
+            result["notification"] = send_agent_notification(
+                agent_email=notify_email,
+                subject="Hot real-estate lead requires follow-up",
+                notification_type="hot_lead",
+                data={"lead": lead_data, "score": result},
+            )
+        return result
+    except (TypeError, ValueError) as error:
+        return {"status": "validation_error", "error": str(error)}
+
+
 # Maximum number of message turns to keep in session memory
 _MAX_SESSION_MESSAGES = 500  # Increased to retain more history
 
@@ -407,6 +435,8 @@ class VoiceAgentOrchestrator:
             create_crm_lead_contact,
             publish_event_to_n8n,
             get_lead_memory_context,
+            predict_fair_property_price,
+            score_sales_lead,
         ]
 
         if settings.openrouter_api_key:
@@ -825,6 +855,10 @@ class VoiceAgentOrchestrator:
                 return book_property_visit(**args)
             elif tool_name == "match_properties_for_profile":
                 return match_properties_for_profile(**args)
+            elif tool_name == "predict_fair_property_price":
+                return predict_fair_property_price(**args)
+            elif tool_name == "score_sales_lead":
+                return score_sales_lead(**args)
             elif tool_name == "create_crm_lead":
                 return create_crm_lead_contact(**args)
             elif tool_name == "publish_to_n8n":

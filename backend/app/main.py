@@ -30,7 +30,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Security
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse
+from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Response
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
 from twilio.twiml.voice_response import VoiceResponse
 
@@ -70,6 +70,7 @@ from .services.security import (
 )
 from .services.session_state import session_state
 from .orchestrator_endpoints import router as orchestrator_router
+from .ml_endpoints import router as ml_router
 from .services.auth_service import (
     register_user,
     authenticate_user,
@@ -107,6 +108,7 @@ except Exception as e:
 
 # Include orchestrator endpoints (n8n integration)
 app.include_router(orchestrator_router)
+app.include_router(ml_router)
 
 # CORS — explicit allow-list, NOT "*"
 app.add_middleware(
@@ -300,6 +302,23 @@ def healthcheck():
         "version": "1.0.0",
         "time": now_iso(),
     }
+
+
+@app.get("/health", include_in_schema=True)
+def health():
+    """Standard health endpoint for container and orchestrator probes."""
+    return {
+        "status": "ok",
+        "app": settings.app_name,
+        "version": "1.0.0",
+        "time": now_iso(),
+    }
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    """Silence browser /favicon.ico 404 logs."""
+    return Response(status_code=204)
 
 
 @app.get("/dashboard")

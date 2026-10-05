@@ -21,6 +21,9 @@ class Settings(BaseSettings):
     smtp_password: str = ""
     smtp_from: str = ""
     log_level: str = "INFO"
+    ml_model_bundle_path: str = "backend/data/week8/models/model_bundle.joblib"
+    ml_require_artifact: bool = False
+    ml_max_batch_rows: int = 1000
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

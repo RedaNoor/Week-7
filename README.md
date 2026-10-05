@@ -1,138 +1,231 @@
-# Real Estate Voice Agent
+# Real Estate Hub — AI Voice Agent & Property Platform
 
-A production-grade real estate sales and voice-agent platform for the
-Pakistani property market. Built with FastAPI, LangGraph orchestration,
-scikit-learn retrieval, PostgreSQL persistence, and SMTP email
-integration. Includes a Next.js + TypeScript website for browsing the
-property catalog, chatting with the sales agent, and booking property
-visits.
+A full-stack real estate platform for the Pakistani property market. It combines a customer-facing website with a conversational AI agent, a REST API backend, and an ML analytics dashboard — all wired together and deployable to Railway in minutes.
 
 ---
 
-## Repository structure
+## What this project does
+
+| Feature | What you get |
+|---|---|
+| **Property catalog** | 42 verified listings across Lahore, Karachi, Islamabad, Rawalpindi, and Faisalabad with prices, developer details, and payment plans |
+| **AI Chat agent (Zara)** | A bilingual (English / Roman Urdu) sales agent powered by LangGraph + OpenAI that recommends properties, books site visits, and learns from every conversation |
+| **Voice call** | Browser-based voice call via Vapi.ai — same AI agent, now you can speak to it |
+| **Appointment booking** | Book property visits, get confirmation emails, reschedule or cancel — all from the website |
+| **Property valuation** | ML model (Random Forest) that predicts a fair price range for any property given its location, size, type, and amenities |
+| **Lead scoring** | Classifier that ranks incoming leads (Hot / Warm / Cold) based on call history, budget, and engagement signals |
+| **ML dashboard** | Streamlit dashboard showing market analytics, lead scores, SHAP explanations, and model health |
+| **n8n integration** | Webhook-based automation for lead sync, follow-up emails, and appointment confirmations |
+| **Security** | API key auth, per-IP rate limiting, CORS allow-list, Pydantic input validation, PII-redacting audit logs |
+
+---
+
+## Project structure
 
 ```
 .
-├── backend/              Python FastAPI backend (see backend/README.md)
-├── src/                  Next.js 16 + TypeScript website
-├── scripts/              Maintenance scripts (test, seed, generate)
-├── package.json          Frontend dependencies
-├── tailwind.config.ts    Tailwind CSS configuration
-├── tsconfig.json         TypeScript configuration
-└── .env.example         Frontend env template
+├── src/                    Next.js 16 + TypeScript website (customer-facing)
+│   ├── app/
+│   │   ├── page.tsx        Main page — properties, chat, voice, appointments
+│   │   ├── layout.tsx      App shell, fonts, metadata
+│   │   └── api/proxy/      Server-side API proxy to the FastAPI backend
+│   └── components/
+│       ├── voice-call-tab  Vapi voice call UI
+│       ├── login-modal     Register / login form
+│       └── auth-context    User session state
+│
+├── backend/                Python FastAPI backend
+│   ├── app/
+│   │   ├── main.py         All REST endpoints (~950 lines)
+│   │   ├── ml_endpoints.py /predict/price, /predict/lead-score, /explain/*
+│   │   ├── config.py       Settings loaded from .env
+│   │   └── services/
+│   │       ├── langgraph_agent.py   The AI conversation graph
+│   │       ├── ml_service.py        Valuation & lead-scoring models
+│   │       ├── property_matcher.py  TF-IDF property search
+│   │       ├── conversation_learning.py  KMeans topic clustering + retraining
+│   │       ├── email_service.py     SMTP confirmation emails
+│   │       ├── appointment_service.py
+│   │       ├── vapi_service.py      Voice webhook handler
+│   │       ├── security.py          API key auth, rate limiting, audit logs
+│   │       └── auth_service.py      User register / login / JWT
+│   ├── data/               Property CSVs, ML logs
+│   └── requirements.txt
+│
+├── dashboard_week8.py      Streamlit ML dashboard (run separately on port 8501)
+├── dataset_properties.csv  168 k-row Zameen property export (source of truth)
+├── scripts/                Utility scripts (seed, evaluate, retrain, drift)
+├── prisma/                 Database schema (PostgreSQL via Neon)
+├── Dockerfile              Backend Docker image
+├── docker-compose.week8.yml  Backend + dashboard together
+├── package.json            Frontend dependencies
+├── railway.json            Railway frontend deployment config
+├── backend/railway.json    Railway backend deployment config
+└── .env.example            Template — copy to .env and .env.local
 ```
-
-For the complete setup guide, see **[backend/SETUP.md](backend/SETUP.md)**.
-
-For the deployment guide, see **[backend/DEPLOYMENT_GUIDE.md](backend/DEPLOYMENT_GUIDE.md)**.
-
-For the change log, see **[backend/CHANGES_SUMMARY.md](backend/CHANGES_SUMMARY.md)**.
 
 ---
 
-## Quick start
+## Requirements
 
-### Prerequisites
+- **Python 3.11+**
+- **Node.js 20+** (or Bun 1.1+)
+- **PostgreSQL** — a free [Neon](https://neon.tech) database works perfectly
+- An **OpenAI API key** (or an OpenRouter key that proxies it)
+- A **Gmail app password** for SMTP emails (optional but recommended)
+- A **Vapi.ai** account for voice calls (optional)
 
-- Python 3.11+
-- Node.js 20+ (or Bun 1.1+)
-- PostgreSQL 14+ (optional — the backend can run without it for testing)
-- A Gmail account with an App Password for SMTP
+---
 
-### 1. Backend
+## Quick start (local)
 
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-# Edit .env and fill in SMTP, DB, and API_KEY values
-uvicorn app.main:app --reload --port 8000
-```
+See **[SETUP.md](SETUP.md)** for the full step-by-step guide.
 
-### 2. Frontend (separate terminal)
+Short version:
 
 ```bash
-# From the repository root
+# 1. Clone and enter the repo
+git clone <your-repo-url>
+cd "Week 7"
+
+# 2. Backend — open a terminal in the project root
+python -m venv backend/venv
+backend/venv/Scripts/activate     # Mac/Linux: source backend/venv/bin/activate
+pip install -r backend/requirements.txt
+cp backend/.env.example backend/.env   # fill in OPENAI_API_KEY, DATABASE_URL, etc.
+uvicorn backend.app.main:app --reload --port 8000
+
+# 3. Frontend — open a second terminal
 npm install
-cp .env.example .env.local
-# Edit .env.local and set NEXT_PUBLIC_API_KEY to match backend
+cp .env.example .env.local          # set BACKEND_URL=http://localhost:8000
 npm run dev
+
+# 4. ML dashboard — open a third terminal (optional)
+streamlit run dashboard_week8.py --server.port 8501
 ```
 
-Open http://localhost:3000 to use the website.
-
-### 3. Generate the property dataset (optional)
-
-The dataset is pre-generated and committed in `backend/data/`. To
-regenerate it (e.g. to add more properties):
-
-```bash
-python scripts/generate_dataset.py
-python scripts/generate_brochures.py
-```
-
-### 4. Seed the conversation learner (optional)
-
-The learner comes pre-seeded with 35 sample conversations. To re-seed:
-
-```bash
-cd backend
-source venv/bin/activate
-python ../scripts/seed_conversations.py
-```
+- Website → http://localhost:3000
+- API docs → http://localhost:8000/docs
+- ML dashboard → http://localhost:8501
 
 ---
 
-## Features
+## Deploying to Railway
 
-### Property catalog
+The project deploys as **two separate Railway services**:
 
-- 42 verified listings across Lahore, Islamabad, Karachi, Faisalabad,
-  and Rawalpindi
-- Real Pakistani developers (DHA, Bahria Town, Emaar, Capital Smart
-  City, etc.)
-- Real locations (DHA Phase 6, Sector F-11, Bahria Town Karachi, etc.)
-- Land sizes in marla and kanal (1 marla = 272.25 sqft)
-- Prices in PKR reflecting late-2024 / 2025 market rates
-- Real nearby hospitals and schools per location
-- 1-3 payment plans per property
+1. **Backend service** — FastAPI (`backend/` folder, uses `backend/railway.json`)
+2. **Frontend service** — Next.js (repo root, uses `railway.json`)
 
-### Conversational sales agent
+Railway's free Starter plan allows up to 3 services and $5/month of free compute.
 
-- LangGraph orchestrator with intent detection, profile extraction,
-  property matching, and appointment-booking flow
-- Retrieval-augmented responses (TF-IDF + cosine similarity over a
-  corpus of past conversations)
-- Topic clustering (KMeans) groups past conversations into discoverable
-  themes
-- Auto-retrains every 5 new conversations
+### Step-by-step
 
-### Appointment booking
+1. Push your code to GitHub.
+2. Go to [railway.app](https://railway.app) → New Project → Deploy from GitHub.
+3. Select your repository.
+4. **Create Backend service first:**
+   - Click "Add Service" → GitHub repo → select the `backend/` root directory.
+   - Railway detects Python automatically via `backend/nixpacks.toml`.
+   - Set environment variables (see table below).
+   - Click Deploy. Note the generated URL (e.g. `https://backend-xxx.up.railway.app`).
+5. **Create Frontend service:**
+   - Add another service from the same repo.
+   - Railway detects Node.js via `nixpacks.toml` at the root.
+   - Set `BACKEND_URL` to your backend Railway URL from step 4.
+   - Set `NEXT_PUBLIC_API_KEY` to match `API_KEY` on the backend.
+   - Click Deploy.
+6. **Add `TRUSTED_ORIGINS`** on the backend: set it to your frontend Railway URL
+   (e.g. `https://frontend-xxx.up.railway.app`).
 
-- UUID-based appointment IDs (not enumerable)
-- Confirmation email sent via SMTP in parallel with n8n publishing
-- Email body includes the scheduled visit time and a call-history
-  section listing every prior call where the visit time was discussed
-- HTML and plain-text email bodies (auto-fallback)
+---
 
-### Security
+## Environment variables
 
-- API key authentication on sensitive endpoints
-- Separate admin API key for mutating endpoints
-- Per-IP rate limiting (sliding window)
-- CORS allow-list (configurable via `TRUSTED_ORIGINS`)
-- Strict Pydantic input validation
-- Email header injection prevention
-- HTML body uses `html.escape()` on every user-supplied value
-- Path traversal defense on property lookup
-- Audit logging with PII redaction
-- Optional recipient allow-list for outbound email
-- Twilio webhook signature verification
+### Backend service (set in Railway → Variables tab)
+
+| Variable | Required | Description |
+|---|---|---|
+| `OPENAI_API_KEY` | Yes | Powers the AI chat agent |
+| `DATABASE_URL` | Yes | PostgreSQL connection string (Neon works great) |
+| `API_KEY` | Yes | Secret key for protected API endpoints |
+| `ADMIN_API_KEY` | Yes | Admin-only endpoints (retrain, rate-limit reset) |
+| `TRUSTED_ORIGINS` | Yes | Comma-separated allowed CORS origins (your frontend URL) |
+| `REQUIRE_AUTH` | Yes | Set to `true` in production |
+| `VAPI_API_KEY` | No | Vapi.ai key for voice calls |
+| `VAPI_ASSISTANT_ID` | No | Your Vapi assistant ID |
+| `DEEPGRAM_API_KEY` | No | Deepgram speech-to-text key |
+| `SMTP_HOST` | No | Email server (default: smtp.gmail.com) |
+| `SMTP_USER` | No | Gmail address |
+| `SMTP_PASSWORD` | No | Gmail app password |
+| `N8N_BASE_URL` | No | n8n webhook URL for automation |
+
+### Frontend service (set in Railway → Variables tab)
+
+| Variable | Required | Description |
+|---|---|---|
+| `BACKEND_URL` | Yes | Your Railway backend URL (server-side only, no NEXT_PUBLIC) |
+| `NEXT_PUBLIC_API_KEY` | Yes | Must match `API_KEY` on the backend |
+
+---
+
+## API endpoints
+
+All endpoints are served from the FastAPI backend. Full interactive docs at `/docs`.
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| GET | `/properties` | API key | List property catalog |
+| GET | `/properties/{id}` | API key | Get single property |
+| POST | `/agent/chat` | API key | Send a message to the AI agent |
+| POST | `/appointments` | API key | Book a site visit |
+| GET | `/appointments` | API key | List all appointments |
+| POST | `/predict/price` | API key | Predict fair property price |
+| POST | `/predict/lead-score` | API key | Score a sales lead |
+| POST | `/explain/price` | API key | SHAP explanation for price |
+| POST | `/explain/lead` | API key | SHAP explanation for lead score |
+| POST | `/predict/batch` | API key | Batch price prediction (CSV) |
+| GET | `/health` | None | API health + ML model status |
+| GET | `/model/info` | None | ML model version and metrics |
+| POST | `/auth/register` | None | Register a new user |
+| POST | `/auth/login` | None | Login and get a JWT token |
+
+---
+
+## ML models
+
+### Property valuation
+- **Algorithm**: Random Forest Regressor
+- **Features**: city, location, property type, area (marla), bedrooms, bathrooms, amenity score, coordinates, listing year
+- **Metrics**: MAE, RMSE, R², MAPE (reported at `/model/info`)
+- **Output**: predicted price + confidence range + over/under-priced verdict
+
+### Lead scoring
+- **Algorithm**: Logistic Regression (class-balanced)
+- **Features**: lead source, budget, city, call count, call duration, response time, visit booked, days since contact, objection type
+- **Output**: Hot / Warm / Cold segment + conversion probability + SHAP feature contributions
+
+Both models train lazily on first request. A pre-trained bundle can be placed at
+`backend/data/week8/models/model_bundle.joblib` to skip training on startup.
+
+---
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js 16, TypeScript, Tailwind CSS v4, ShadCN UI |
+| Backend | FastAPI, Pydantic v2, LangGraph, LangChain |
+| Database | PostgreSQL (Neon) + SQLAlchemy |
+| ML | scikit-learn, pandas, numpy, SHAP, joblib |
+| Voice | Vapi.ai (real-time voice), Deepgram (speech-to-text) |
+| Email | SMTP (Gmail) |
+| Automation | n8n webhooks |
+| Deployment | Railway (Docker / Nixpacks) |
+| CI | GitHub Actions |
 
 ---
 
 ## License
 
-Proprietary. All rights reserved.
+Proprietary — all rights reserved.
