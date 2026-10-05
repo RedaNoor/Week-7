@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: real-estate-backend
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install --no-cache-dir -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: REQUIRE_AUTH
+        value: "false"
+      - key: LOG_LEVEL
+        value: INFO
+      - key: ML_REQUIRE_ARTIFACT
+        value: "false"

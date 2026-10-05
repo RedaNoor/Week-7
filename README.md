@@ -110,33 +110,17 @@ streamlit run dashboard_week8.py --server.port 8501
 
 ---
 
-## Deploying to Railway
+## Deployment (100% Free Forever)
 
-The project deploys as **two separate Railway services**:
+See **[DEPLOY.md](DEPLOY.md)** for the complete deployment guide.
 
-1. **Backend service** — FastAPI (`backend/` folder, uses `backend/railway.json`)
-2. **Frontend service** — Next.js (repo root, uses `railway.json`)
+The recommended free production setup is:
+1. **Frontend (Website)**: Deploy to **[Vercel](https://vercel.com)** (zero-config Next.js, 100% free Hobby tier).
+2. **Backend (API)**: Deploy to **[Render](https://render.com)** (free Python Web Service using `render.yaml` or manual setup).
+3. **ML Dashboard**: Deploy to **[Streamlit Community Cloud](https://share.streamlit.io)** (free hosting for `dashboard_week8.py`).
+4. **Database**: Managed PostgreSQL on **[Neon](https://neon.tech)** (free tier).
 
-Railway's free Starter plan allows up to 3 services and $5/month of free compute.
-
-### Step-by-step
-
-1. Push your code to GitHub.
-2. Go to [railway.app](https://railway.app) → New Project → Deploy from GitHub.
-3. Select your repository.
-4. **Create Backend service first:**
-   - Click "Add Service" → GitHub repo → select the `backend/` root directory.
-   - Railway detects Python automatically via `backend/nixpacks.toml`.
-   - Set environment variables (see table below).
-   - Click Deploy. Note the generated URL (e.g. `https://backend-xxx.up.railway.app`).
-5. **Create Frontend service:**
-   - Add another service from the same repo.
-   - Railway detects Node.js via `nixpacks.toml` at the root.
-   - Set `BACKEND_URL` to your backend Railway URL from step 4.
-   - Set `NEXT_PUBLIC_API_KEY` to match `API_KEY` on the backend.
-   - Click Deploy.
-6. **Add `TRUSTED_ORIGINS`** on the backend: set it to your frontend Railway URL
-   (e.g. `https://frontend-xxx.up.railway.app`).
+*(Railway is also supported via included `railway.json` and `backend/railway.json` configs if you have active Railway credits).*
 
 ---
 

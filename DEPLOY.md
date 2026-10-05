@@ -1,176 +1,138 @@
----
-noteId: "dadeaca0c07c11f19a7c936a61417884"
-tags: []
+# DEPLOY.md — Production Deployment Guide
+
+Since Railway free trials expire, this guide provides **100% Free Forever** hosting options with no credit card required:
+
+| Service | Best Free Host | Cost | Setup Time |
+|---|---|---|---|
+| **Website (Next.js)** | **[Vercel](https://vercel.com)** | Free Forever (Hobby tier) | 2 minutes |
+| **Backend (FastAPI)** | **[Render](https://render.com)** | Free Forever (Web Service) | 4 minutes |
+| **ML Dashboard (Streamlit)** | **[Streamlit Community Cloud](https://share.streamlit.io)** | Free Forever | 2 minutes |
+| **Database (PostgreSQL)** | **[Neon](https://neon.tech)** | Free Forever | 1 minute |
 
 ---
 
-# DEPLOY.md — Deploy to Railway (free hosting)
+## Prerequisites (Checklist)
 
-Railway is a cloud platform similar to Heroku. The free Starter plan gives you $5/month of compute — enough to run both services continuously.
-
-This project deploys as two services:
-1. **Backend** (FastAPI) — Python app in `backend/`
-2. **Frontend** (Next.js) — Node.js app in the repo root
-
----
-
-## Before you start
-
-- [ ] Code is pushed to a GitHub repository
-- [ ] You have a [Railway account](https://railway.app) (sign up free with GitHub)
-- [ ] You have your environment variable values ready (see README.md)
-- [ ] Your Neon database URL is ready
+- [ ] Code is pushed to your GitHub repository:
+  ```bash
+  git add .
+  git commit -m "chore: ready for deployment"
+  git push origin main
+  ```
+- [ ] You have created a free account on [Vercel](https://vercel.com/signup) (Sign up with GitHub).
+- [ ] You have created a free account on [Render](https://render.com) (Sign up with GitHub).
+- [ ] You have your Neon database connection string ready.
 
 ---
 
-## Part 1 — Deploy the Backend
+## Step 1 — Deploy the FastAPI Backend to Render (Free)
 
-### 1.1 Create a new Railway project
+Render natively runs Python/FastAPI web services on its free tier.
 
-1. Go to https://railway.app/new
-2. Click **"Deploy from GitHub repo"**
-3. Select your repository
-4. Railway will auto-detect the project. **Don't click Deploy yet.**
+### 1.1 Create the Web Service
+1. Log in to your [Render Dashboard](https://dashboard.render.com).
+2. Click **New +** → **Web Service**.
+3. Connect your GitHub account and select your repository.
+4. Fill in the service configuration:
+   - **Name**: `real-estate-backend` (or your choice)
+   - **Region**: Choose the closest region (e.g., Frankfurt or Oregon)
+   - **Branch**: `main`
+   - **Root Directory**: `backend`
+   - **Runtime**: `Python 3`
+   - **Build Command**: `pip install --no-cache-dir -r requirements.txt`
+   - **Start Command**: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
+   - **Instance Type**: Select **Free** ($0/month)
 
-### 1.2 Configure the backend service
+### 1.2 Add Environment Variables
+Scroll down to **Environment Variables** (or click the **Environment** tab) and add:
 
-1. Click on the service Railway created.
-2. Go to **Settings** → **Root Directory** → type `backend`
-3. Railway will now only look at the `backend/` folder.
+| Key | Value | Notes |
+|---|---|---|
+| `APP_ENV` | `production` | Enables production mode |
+| `REQUIRE_AUTH` | `false` | Set `true` if requiring API keys |
+| `OPENAI_API_KEY` | `sk-...` | Your OpenAI or OpenRouter key |
+| `DATABASE_URL` | `postgresql://...` | Your Neon database connection URL |
+| `VAPI_API_KEY` | `2041eb08-58e1...` | From your `.env` |
+| `VAPI_ASSISTANT_ID` | `eb8a4d4b-9a92...` | From your `.env` |
+| `VAPI_PUBLIC_KEY` | `2041eb08-58e1...` | From your `.env` |
+| `LOG_LEVEL` | `INFO` | Standard logging |
+| `ML_REQUIRE_ARTIFACT` | `false` | Allows auto-loading models |
+| `TRUSTED_ORIGINS` | `*` | Or set to your Vercel URL once deployed |
 
-### 1.3 Set environment variables
+*(Optional for email confirmations)*:
+- `SMTP_HOST`: `smtp.gmail.com`
+- `SMTP_PORT`: `465`
+- `SMTP_USER`: `your-email@gmail.com`
+- `SMTP_PASSWORD`: `your-gmail-app-password`
 
-Click **Variables** → **Add** and enter these one by one:
-
-```
-APP_ENV=production
-REQUIRE_AUTH=true
-OPENAI_API_KEY=<your key>
-DATABASE_URL=<your Neon connection string>
-API_KEY=<generate: python -c "import secrets; print(secrets.token_urlsafe(32))">
-ADMIN_API_KEY=<generate another one>
-TRUSTED_ORIGINS=https://your-frontend.up.railway.app   ← update after step 2
-LOG_LEVEL=INFO
-ML_REQUIRE_ARTIFACT=false
-```
-
-Optional (for email):
-```
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=465
-SMTP_USER=your-gmail@gmail.com
-SMTP_PASSWORD=your-app-password
-SMTP_FROM=your-gmail@gmail.com
-DEFAULT_RECIPIENT_EMAIL=your-gmail@gmail.com
-```
-
-Optional (for voice):
-```
-VAPI_API_KEY=<your key>
-VAPI_ASSISTANT_ID=<your assistant id>
-DEEPGRAM_API_KEY=<your key>
-```
-
-### 1.4 Deploy the backend
-
-Click **Deploy**. Railway will:
-1. Build a Docker image using `Dockerfile`
-2. Start uvicorn on the assigned `$PORT`
-
-Wait for the green "Active" status. Note your backend URL — it looks like:
-```
-https://backend-production-xxxx.up.railway.app
-```
-
-Test it: `https://your-backend.up.railway.app/health` should return `{"status": "ok"}`.
+### 1.3 Deploy and Copy Backend URL
+1. Click **Create Web Service**.
+2. Wait 2–3 minutes for the build and deployment to finish.
+3. Once live, Render displays your URL at the top:
+   `https://real-estate-backend-xxxx.onrender.com`
+4. Test it by opening `https://real-estate-backend-xxxx.onrender.com/health` in your browser. You should see `{"status":"ok"}`.
+5. **Keep this URL handy for Step 2!**
 
 ---
 
-## Part 2 — Deploy the Frontend
+## Step 2 — Deploy the Next.js Frontend to Vercel (Free)
 
-### 2.1 Add a second service
+Vercel was created by the authors of Next.js and provides instant, zero-config deployment.
 
-In your Railway project, click **+ New** → **GitHub Repo** → same repo.
+### 2.1 Import the Repository
+1. Log in to [Vercel](https://vercel.com/dashboard).
+2. Click **Add New…** → **Project**.
+3. Under **Import Git Repository**, click **Import** next to your repository.
 
-### 2.2 Configure the frontend service
+### 2.2 Configure the Project
+1. **Project Name**: `real-estate-hub` (or your choice).
+2. **Framework Preset**: `Next.js` (automatically detected).
+3. **Root Directory**: `./` (leave default).
+4. **Build & Output Settings**: Leave default (`next build`).
 
-1. Root Directory: leave empty (or set to `/`)
-2. Railway detects Node.js and runs `npm run build` automatically via `nixpacks.toml`.
+### 2.3 Set Environment Variables
+Expand the **Environment Variables** section and add:
 
-### 2.3 Set environment variables
+| Name | Value |
+|---|---|
+| `BACKEND_URL` | `https://real-estate-backend-xxxx.onrender.com` *(from Step 1.3)* |
+| `NODE_ENV` | `production` |
+| `NEXT_PUBLIC_STREAMLIT_URL` | `http://localhost:8501` *(or your Streamlit link from Step 3)* |
 
+### 2.4 Deploy
+1. Click **Deploy**.
+2. Vercel will build the Next.js website and deploy it in ~60 seconds.
+3. You will get a live URL like: `https://real-estate-hub-xxxx.vercel.app`.
+4. Open the website: your property catalog, search, AI chat (Zara), voice agent, and appointment booking are live!
+
+### 2.5 (Recommended) Update Backend Trusted Origins
+In your Render backend settings, update `TRUSTED_ORIGINS`:
 ```
-BACKEND_URL=https://your-backend.up.railway.app   ← your backend URL from Part 1
-NEXT_PUBLIC_API_KEY=<same value as API_KEY on the backend>
-```
-
-### 2.4 Deploy the frontend
-
-Click **Deploy**. Your frontend URL will be something like:
-```
-https://frontend-production-xxxx.up.railway.app
-```
-
----
-
-## Part 3 — Wire them together
-
-### 3.1 Update TRUSTED_ORIGINS on the backend
-
-Go to your **backend service** → Variables → update:
-```
-TRUSTED_ORIGINS=https://your-frontend.up.railway.app
-```
-
-Railway auto-redeploys when variables change.
-
-### 3.2 Verify
-
-1. Open your frontend URL in a browser
-2. The Properties tab should load your listings
-3. Try the Chat — it should respond
-4. Try booking an appointment — you should get an email
-
----
-
-## Part 4 — Custom domain (optional)
-
-1. Go to your service → Settings → Domains
-2. Click **Generate Domain** for a free `*.up.railway.app` subdomain, or
-3. Add your own domain and follow the DNS instructions
-
----
-
-## Troubleshooting
-
-### Build fails: "No module named psycopg2"
-The Dockerfile installs `libpq-dev` which provides psycopg2 support. If you see this error, make sure `psycopg2-binary` is in `requirements.txt` (it is — version 2.9.10).
-
-### Frontend shows "Backend unreachable"
-Check that `BACKEND_URL` is set to your Railway backend URL (no trailing slash).
-
-### Chat works locally but not on Railway
-Make sure `TRUSTED_ORIGINS` on the backend includes your frontend Railway URL exactly.
-
-### ML model trains on every startup
-The model bundle is not persisted across Railway deployments by default. Either:
-- Accept the ~60s cold start (safe — it just trains on startup)
-- Or use Railway Volumes to persist `backend/data/week8/models/`
-
-### Database connection errors
-Make sure `DATABASE_URL` uses `sslmode=require` for Neon:
-```
-postgresql://neondb_owner:password@host/dbname?sslmode=require
+TRUSTED_ORIGINS=https://real-estate-hub-xxxx.vercel.app
 ```
 
 ---
 
-## Cost estimate
+## Step 3 — Deploy the Streamlit ML Dashboard (Free)
 
-Railway Starter plan:
-- **$5/month free credit** — enough for 2 small services running 24/7
-- Backend (512 MB RAM): ~$3-4/month
-- Frontend (256 MB RAM): ~$1-2/month
-- Total: within free credit most months
+Streamlit provides free cloud hosting specifically for Streamlit apps.
 
-Neon database: free tier (0.5 GB) is plenty for this project.
+1. Go to [share.streamlit.io](https://share.streamlit.io) and sign in with GitHub.
+2. Click **Create app**.
+3. Configure:
+   - **Repository**: Select your GitHub repo
+   - **Branch**: `main`
+   - **Main file path**: `dashboard_week8.py`
+   - **App URL**: Choose a custom subdomain (e.g., `real-estate-hub-ml.streamlit.app`)
+4. Click **Advanced settings…** and add the secret:
+   ```toml
+   WEEK8_API_URL = "https://real-estate-backend-xxxx.onrender.com"
+   ```
+5. Click **Deploy!**
+6. Once deployed, copy your Streamlit URL (e.g., `https://real-estate-hub-ml.streamlit.app`) and add it to your Vercel frontend environment variables as `NEXT_PUBLIC_STREAMLIT_URL`.
+
+---
+
+## Alternative: Railway Deployment
+
+If you have active Railway credits or a paid plan, Railway configuration files (`railway.json` and `nixpacks.toml`) are already included in this repository. Follow the instructions in the repository history or run `railway up`.

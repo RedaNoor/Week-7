@@ -21,7 +21,11 @@ import { NextRequest, NextResponse } from "next/server";
  *   http://localhost:8000/agent/chat (POST)
  */
 
-const BACKEND_URL = process.env.BACKEND_URL || "http://localhost:8000";
+const BACKEND_URL =
+  process.env.BACKEND_URL ||
+  (process.env.VERCEL_URL
+    ? `https://${process.env.VERCEL_URL}/api`
+    : "http://localhost:8000");
 
 /**
  * Headers that should be forwarded from the client request to the backend.
