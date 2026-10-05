@@ -1,0 +1,17 @@
+{
+  "reference_rows": 30000,
+  "current_rows": 30000,
+  "price_shift": 0.15,
+  "psi": {
+    "price": 0.014827,
+    "area_marla": 0.0,
+    "bedrooms": 0.0,
+    "bathrooms": 0.0
+  },
+  "alert": "retrain",
+  "thresholds": {
+    "psi_warning": 0.1,
+    "psi_retrain": 0.2,
+    "mape_retrain_percent": 15
+  }
+}
