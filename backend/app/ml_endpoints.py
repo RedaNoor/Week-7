@@ -88,6 +88,10 @@ def predict_lead(request: LeadRequest) -> Dict[str, Any]:
         return models.score_lead(request.model_dump())
     except RuntimeError as error:
         raise HTTPException(status_code=503, detail=str(error)) from error
+    except Exception as error:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"{type(error).__name__}: {error}") from error
 
 
 @router.post("/explain/lead", dependencies=[Depends(require_api_key)])
