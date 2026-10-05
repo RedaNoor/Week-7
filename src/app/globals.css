@@ -135,3 +135,13 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
+
+/* Hero background gradient used by the homepage */
+.brand-gradient {
+  background: linear-gradient(
+    135deg,
+    oklch(0.38 0.18 165) 0%,
+    oklch(0.45 0.20 175) 40%,
+    oklch(0.42 0.22 190) 100%
+  );
+}
