@@ -95,8 +95,8 @@ export function LoginModal({ isOpen, onOpenChange }: { isOpen: boolean; onOpenCh
     setEmail("admin@realestate.pk");
     setPassword("");
     toast({
-      title: "Admin Demo Selected",
-      description: "Please enter the default password: admin123",
+      title: "Admin Account Selected",
+      description: "Please enter your password to sign in.",
     });
   };
 
@@ -197,18 +197,11 @@ export function LoginModal({ isOpen, onOpenChange }: { isOpen: boolean; onOpenCh
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="login-password">Password</Label>
-                    {email === "admin@realestate.pk" && (
-                      <span className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
-                        Default: <code className="bg-muted px-1 py-0.5 rounded font-mono font-bold">admin123</code>
-                      </span>
-                    )}
-                  </div>
+                  <Label htmlFor="login-password">Password</Label>
                   <Input
                     id="login-password"
                     type="password"
-                    placeholder={email === "admin@realestate.pk" ? "Enter default password (admin123)" : "••••••••"}
+                    placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
