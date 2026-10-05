@@ -32,7 +32,12 @@ from fastapi import Depends, FastAPI, HTTPException, Request, Security
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse, PlainTextResponse, Response
 from pydantic import BaseModel, EmailStr, Field, ConfigDict
-from twilio.twiml.voice_response import VoiceResponse
+try:
+    from twilio.twiml.voice_response import VoiceResponse
+    _TWILIO_AVAILABLE = True
+except ImportError:
+    VoiceResponse = None  # type: ignore
+    _TWILIO_AVAILABLE = False
 
 from .config import settings
 from .services.appointment_service import (
@@ -50,7 +55,13 @@ from .services.crm_service import log_call_and_booking, create_crm_contact
 from .services.db_store import init_db, save_lead_profile, fetch_lead
 from .services.db_store_enhanced import init_db as init_enhanced_db
 from .services.email_service import send_booking_email, send_followup_email
-from .services.langgraph_agent import orchestrator, strip_unwanted_greetings
+try:
+    from .services.langgraph_agent import orchestrator, strip_unwanted_greetings
+    _LANGCHAIN_AVAILABLE = True
+except ImportError:
+    orchestrator = None  # type: ignore
+    strip_unwanted_greetings = None  # type: ignore
+    _LANGCHAIN_AVAILABLE = False
 from .services.lead_memory import lead_memory
 from .services.n8n_webhook import n8n_publisher
 from .services.property_matcher import PROPERTY_CATALOG, match_properties
@@ -78,8 +89,16 @@ from .services.auth_service import (
     get_current_user_optional,
     require_admin_user,
 )
-from .services.vapi_service import handle_vapi_webhook, get_vapi_config
+try:
+    from .services.vapi_service import handle_vapi_webhook, get_vapi_config
+    _VAPI_AVAILABLE = True
+except ImportError:
+    handle_vapi_webhook = None  # type: ignore
+    get_vapi_config = None  # type: ignore
+    _VAPI_AVAILABLE = False
 
+# Detect serverless / Vercel environment
+SERVERLESS_MODE = bool(os.environ.get("VERCEL") or os.environ.get("AWS_LAMBDA_FUNCTION_NAME"))
 # ---------------------------------------------------------------------------
 # Logging setup
 # ---------------------------------------------------------------------------
@@ -258,6 +277,8 @@ def auth_get_me(current_user: Dict[str, Any] = Depends(get_current_user)):
 @app.get("/agent/vapi-config")
 def get_vapi_config_endpoint():
     """Returns public Vapi credentials and agent configuration for Web Calls."""
+    if not _VAPI_AVAILABLE or get_vapi_config is None:
+        return {"status": "unavailable", "detail": "Vapi service not available in this deployment"}
     return get_vapi_config()
 
 
@@ -619,18 +640,16 @@ def get_call_history(lead_id: str, limit: int = 10):
 # ===========================================================================
 @app.post("/twilio/voice")
 async def twilio_voice(request: Request):
-    """Inbound Twilio voice webhook.
-
-    Production should verify X-Twilio-Signature against TWILIO_AUTH_TOKEN.
-    """
-    # Signature verification (skipped in dev if TWILIO_AUTH_TOKEN is unset)
+    """Inbound Twilio voice webhook."""
+    if not _TWILIO_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Twilio not available in this deployment")
     body = await request.body()
     from app.services.security import verify_twilio_signature
     if not verify_twilio_signature(request, body):
         raise HTTPException(status_code=403, detail="Invalid Twilio signature")
 
     form = await request.form()
-    caller = (form.get("From") or "unknown caller")[:20]  # truncate to prevent TTS abuse
+    caller = (form.get("From") or "unknown caller")[:20]
 
     response = VoiceResponse()
     response.say(
@@ -745,16 +764,12 @@ async def session_turn(payload: SessionTurnRequest):
 @app.post("/agent/chat",
           dependencies=[Depends(require_api_key), Depends(rate_limit("chat"))])
 def agent_chat(payload: ChatRequest):
-    """Main chat endpoint used by the website's chat widget.
-
-    The agent:
-      1. Detects intent
-      2. Extracts profile (budget, city, area)
-      3. Recommends matching properties
-      4. Optionally triggers appointment booking flow
-      5. Generates response WITH learned context from past conversations
-      6. Records this conversation back into the learner (so it keeps learning)
-    """
+    """Main chat endpoint. Requires LangChain/LangGraph (not available on Vercel serverless)."""
+    if not _LANGCHAIN_AVAILABLE or orchestrator is None:
+        raise HTTPException(
+            status_code=503,
+            detail="AI chat agent is not available in this deployment. Use the voice agent locally."
+        )
     try:
         result = orchestrator.process_turn(
             session_id=sanitize_session_id(payload.session_id),

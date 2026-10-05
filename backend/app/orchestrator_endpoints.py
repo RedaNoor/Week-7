@@ -24,7 +24,12 @@ from app.services.db_store_enhanced import (
     LeadStore,
     SessionStore,
 )
-from app.services.langgraph_agent import orchestrator
+try:
+    from app.services.langgraph_agent import orchestrator
+    _ORCHESTRATOR_AVAILABLE = True
+except ImportError:
+    orchestrator = None  # type: ignore
+    _ORCHESTRATOR_AVAILABLE = False
 from app.services.lead_memory import lead_memory
 from app.services.n8n_webhook import n8n_publisher
 from app.services.security import (
