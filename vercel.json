@@ -10,8 +10,8 @@
     "api/index.py": {
       "memory": 1024,
       "maxDuration": 60,
-      "includeFiles": "{dataset_properties.csv,backend/**}",
-      "excludeFiles": "{backend/data/ml_prediction_log.jsonl,**/__pycache__/**,**/*.pyc,scripts/**,.notebook/**,.pytest_cache/**,.git/**,node_modules/**,.next/**}"
+      "includeFiles": "backend/data/**",
+      "excludeFiles": "{backend/data/ml_prediction_log.jsonl,**/__pycache__/**,**/*.pyc,scripts/**,.notebook/**,.pytest_cache/**,.git/**,node_modules/**,.next/**,dataset_properties.csv}"
     }
   }
 }
