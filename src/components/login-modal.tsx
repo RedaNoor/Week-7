@@ -90,6 +90,16 @@ export function LoginModal({ isOpen, onOpenChange }: { isOpen: boolean; onOpenCh
     }
   };
 
+  const handleAdminDemoSelect = () => {
+    setActiveTab("login");
+    setEmail("admin@realestate.pk");
+    setPassword("");
+    toast({
+      title: "Admin Demo Selected",
+      description: "Please enter the default password: admin123",
+    });
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[480px] bg-card border-border shadow-2xl">
@@ -145,7 +155,7 @@ export function LoginModal({ isOpen, onOpenChange }: { isOpen: boolean; onOpenCh
             {/* QUICK DEMO LOGINS */}
             <div className="mb-4 p-3 bg-muted/40 rounded-lg border border-border/50">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" /> One-Click Demo Access
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" /> Demo Accounts
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <Button
@@ -164,7 +174,7 @@ export function LoginModal({ isOpen, onOpenChange }: { isOpen: boolean; onOpenCh
                   variant="secondary"
                   size="sm"
                   disabled={loading}
-                  onClick={() => handleQuickLogin("admin@realestate.pk", "admin123")}
+                  onClick={handleAdminDemoSelect}
                   className="text-xs justify-start h-9"
                 >
                   <ShieldCheck className="w-3.5 h-3.5 mr-1.5 text-amber-500" />
@@ -187,11 +197,18 @@ export function LoginModal({ isOpen, onOpenChange }: { isOpen: boolean; onOpenCh
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="login-password">Password</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="login-password">Password</Label>
+                    {email === "admin@realestate.pk" && (
+                      <span className="text-[11px] text-amber-600 dark:text-amber-400 font-medium">
+                        Default: <code className="bg-muted px-1 py-0.5 rounded font-mono font-bold">admin123</code>
+                      </span>
+                    )}
+                  </div>
                   <Input
                     id="login-password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder={email === "admin@realestate.pk" ? "Enter default password (admin123)" : "••••••••"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
