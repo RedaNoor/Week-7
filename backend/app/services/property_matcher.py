@@ -112,26 +112,19 @@ PROPERTY_CATALOG = _load_catalog()
 
 
 def _parse_budget(budget_str: Any) -> tuple[int, int]:
-    """Parse a free-text budget string into (min, max) in PKR.
-
-    Supports formats like:
-      - "5 crore" / "5cr" / "50000000" / "50 lakh"
-      - "50-80 lakh" / "between 5 and 10 crore"
-    """
+    """Parse a free-text budget string into (min, max) in PKR."""
     if not budget_str:
         return (0, float("inf"))
     text = str(budget_str).lower().replace(",", "")
     import re
 
-    # Convert crore/lakh to absolute numbers
-    # Pattern: number followed by crore/cr or lakh/lac/l
     numbers = []
-    for m in re.finditer(r"(\d+(?:\.\d+)?)\s*(crore|cr|lakh|lac|l|million|m)\b", text):
+    for m in re.finditer(r"(\d+(?:\.\d+)?)\s*(crores?|cr|karor|kror|lakhs?|lacs?|lk|million|m)\b", text):
         n = float(m.group(1))
         unit = m.group(2)
-        if unit.startswith("cr"):  # crore
+        if unit.startswith("cr") or "kror" in unit or "karor" in unit:  # crore
             n *= 10_000_000
-        elif unit.startswith("m"):  # million
+        elif unit.startswith("m") and not unit.startswith("mar"):  # million
             n *= 1_000_000
         else:  # lakh / lac / l
             n *= 100_000
@@ -144,10 +137,10 @@ def _parse_budget(budget_str: Any) -> tuple[int, int]:
     if not numbers:
         return (0, float("inf"))
     if len(numbers) == 1:
-        # Allow 20% headroom
-        return (int(numbers[0] * 0.8), int(numbers[0] * 1.2))
+        # User specified an upper bound / target budget (allow 10% headroom)
+        return (0, int(numbers[0] * 1.10))
 
-    return (min(numbers), max(numbers))
+    return (min(numbers), int(max(numbers) * 1.05))
 
 
 def match_properties(profile: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -235,11 +228,11 @@ def match_properties(profile: Dict[str, Any]) -> List[Dict[str, Any]]:
                 score += 4
 
         # Budget match
-        if price and budget_min > 0:
-            if budget_min <= price <= budget_max:
-                score += 4
+        if price and budget_max > 0 and budget_max != float("inf"):
+            if price <= budget_max:
+                score += 8  # Strong reward for within budget
             else:
-                score -= 2  # penalize but don't exclude
+                score -= 12  # Strong penalty for exceeding budget
 
         return score
 

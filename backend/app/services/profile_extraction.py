@@ -18,8 +18,8 @@ from typing import Any, Dict, Optional, Tuple
 _ROOT = Path(__file__).resolve().parents[2]
 _LOCATIONS_CSV = _ROOT / "data" / "locations.csv"
 
-_CRORE_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(?:crore|cr)\b", re.IGNORECASE)
-_LAKH_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(?:lakh|lac)\b", re.IGNORECASE)
+_CRORE_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(?:crores?|cr|karor|kror)\b", re.IGNORECASE)
+_LAKH_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(?:lakhs?|lacs?|lac|lk)\b", re.IGNORECASE)
 _NAME_RE = re.compile(
     r"(?:my name is|mera naam|mera name|main naam|naam hai|naam|name is|i am|this is)\s*:?\s*([a-zA-Z]+(?:\s+[a-zA-Z]+)?)",
     re.IGNORECASE,
