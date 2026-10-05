@@ -129,7 +129,7 @@ class Week8Models:
                 return
             if self._load_bundle():
                 return
-            if settings.ml_require_artifact or settings.app_env.lower() == "production":
+            if settings.ml_require_artifact:
                 raise RuntimeError(f"ML model bundle is required but unavailable at {MODEL_BUNDLE_PATH}")
             properties = load_property_data()
             self.cities = {str(value).lower() for value in properties["city"].unique()}
@@ -169,7 +169,7 @@ class Week8Models:
             return True
         except Exception as error:
             logger.warning("Could not load ML model bundle: %s", error)
-            if settings.ml_require_artifact or settings.app_env.lower() == "production":
+            if settings.ml_require_artifact:
                 raise RuntimeError(f"Invalid ML model bundle at {MODEL_BUNDLE_PATH}: {error}") from error
             return False
 

@@ -35,8 +35,8 @@ backend/app/data/lead_memory.json
 logs/
 backend/data/ml_prediction_log.jsonl
 backend/data/week8/evaluation/
-backend/data/week8/monitoring/
-backend/data/week8/models/
+backend/data/week8/models/*.rollback.joblib
+backend/data/week8/models/price_model.joblib
 
 # OS
 .DS_Store

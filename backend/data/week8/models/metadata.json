@@ -1,0 +1,9 @@
+{
+  "model_version": "week8-v1",
+  "promoted_at": "2026-10-05T05:37:37.262893+00:00",
+  "metrics": {
+    "mae_pkr": 3515743.01,
+    "r2": 0.8303
+  },
+  "policy": "promote after holdout comparison; rollback with --rollback"
+}
