@@ -399,11 +399,16 @@ function HomeContent() {
           </div>
           <div className="flex items-center gap-2.5">
             <a
-              href={process.env.NEXT_PUBLIC_STREAMLIT_URL || "http://localhost:8501"}
+              href={
+                process.env.NEXT_PUBLIC_STREAMLIT_URL ||
+                (typeof window !== "undefined"
+                  ? `${window.location.origin}/api/py/docs`
+                  : "/api/py/docs")
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 transition-colors shadow-sm"
-              title="Open Machine Learning Analytics & Lead Scoring Dashboard"
+              title="Open ML API Docs & Lead Scoring Dashboard"
             >
               <BarChart3 className="h-3.5 w-3.5 text-emerald-600" />
               <span className="hidden sm:inline">ML Dashboard</span>
