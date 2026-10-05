@@ -272,10 +272,13 @@ class Week8Models:
         return result
 
     def _log(self, kind: str, payload: Dict[str, Any], result: Dict[str, Any]) -> None:
-        LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-        record = {"timestamp": datetime.now(timezone.utc).isoformat(), "kind": kind, "model_version": MODEL_VERSION, "input": payload, "output": result}
-        with LOG_PATH.open("a", encoding="utf-8") as output:
-            output.write(json.dumps(record, default=str) + "\n")
+        try:
+            LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+            record = {"timestamp": datetime.now(timezone.utc).isoformat(), "kind": kind, "model_version": MODEL_VERSION, "input": payload, "output": result}
+            with LOG_PATH.open("a", encoding="utf-8") as output:
+                output.write(json.dumps(record, default=str) + "\n")
+        except (OSError, PermissionError) as error:
+            logger.debug("Skipping local prediction logging on read-only filesystem: %s", error)
 
 
 models = Week8Models()
