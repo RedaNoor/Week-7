@@ -4,10 +4,14 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from dotenv import load_dotenv
 
-# Add backend directory to Python path
+# Add backend directory to Python path and load environment
 ROOT = Path(__file__).resolve().parent.parent
 BACKEND_DIR = ROOT / "backend"
+load_dotenv(BACKEND_DIR / ".env")
+load_dotenv(ROOT / ".env")
+
 if str(BACKEND_DIR) not in sys.path:
     sys.path.insert(0, str(BACKEND_DIR))
 
