@@ -1,6 +1,5 @@
-﻿# Slim requirements for Vercel serverless function (api/index.py)
-# Heavy deps (langgraph, langchain, twilio) are excluded to stay under 500MB bundle limit.
-# Those are only used by the local voice-agent features, not the web API endpoints.
+# Slim requirements for Vercel serverless function (api/index.py)
+# Heavy deps (langgraph, langchain, twilio) excluded to stay under 500MB bundle limit.
 fastapi==0.115.0
 uvicorn[standard]==0.32.0
 pydantic==2.9.2
