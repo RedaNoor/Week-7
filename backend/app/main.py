@@ -62,6 +62,7 @@ except ImportError:
     orchestrator = None  # type: ignore
     strip_unwanted_greetings = None  # type: ignore
     _LANGCHAIN_AVAILABLE = False
+from .services.chat_agent_fallback import process_chat_turn, strip_unwanted_greetings as fallback_strip_greetings
 from .services.lead_memory import lead_memory
 from .services.n8n_webhook import n8n_publisher
 from .services.property_matcher import PROPERTY_CATALOG, match_properties
@@ -764,88 +765,104 @@ async def session_turn(payload: SessionTurnRequest):
 @app.post("/agent/chat",
           dependencies=[Depends(require_api_key), Depends(rate_limit("chat"))])
 def agent_chat(payload: ChatRequest):
-    """Main chat endpoint. Requires LangChain/LangGraph (not available on Vercel serverless)."""
-    if not _LANGCHAIN_AVAILABLE or orchestrator is None:
-        raise HTTPException(
-            status_code=503,
-            detail="AI chat agent is not available in this deployment. Use the voice agent locally."
-        )
-    try:
-        result = orchestrator.process_turn(
-            session_id=sanitize_session_id(payload.session_id),
-            transcript=payload.message,  # already length-constrained by model
-        )
-        # Extract assistant text
-        assistant_text = ""
-        for msg in reversed(result.get("messages", []) or []):
-            msg_type = getattr(msg, "type", "") if not isinstance(msg, dict) else msg.get("type", msg.get("role", ""))
-            if msg_type in ("ai", "assistant"):
-                content = (
-                    getattr(msg, "content", None)
-                    if not isinstance(msg, dict)
-                    else msg.get("content")
-                )
-                if content and isinstance(content, str) and len(content.strip()) > 5:
-                    assistant_text = content[:8000]
-                    break
-        if not assistant_text:
-            profile = result.get("profile", {}) or {}
-            recs = result.get("recommendations", []) or []
-            city = profile.get("city") or "Lahore"
-            area = profile.get("area") or ""
-            location_str = f"{area} ({city})" if area and city else (area or city)
+    """Main chat endpoint. Uses LangGraph when available, or lightweight conversational fallback."""
+    clean_session_id = sanitize_session_id(payload.session_id)
+    clean_message = (payload.message or "").strip()
 
-            if recs:
-                top = recs[0]
-                price_num = top.get("price", 0)
-                if price_num >= 10000000:
-                    price_str = f"PKR {price_num / 10000000:g} crore"
-                elif price_num >= 100000:
-                    price_str = f"PKR {price_num / 100000:g} lakh"
+    if _LANGCHAIN_AVAILABLE and orchestrator is not None:
+        try:
+            result = orchestrator.process_turn(
+                session_id=clean_session_id,
+                transcript=clean_message,
+            )
+            # Extract assistant text
+            assistant_text = ""
+            for msg in reversed(result.get("messages", []) or []):
+                msg_type = getattr(msg, "type", "") if not isinstance(msg, dict) else msg.get("type", msg.get("role", ""))
+                if msg_type in ("ai", "assistant"):
+                    content = (
+                        getattr(msg, "content", None)
+                        if not isinstance(msg, dict)
+                        else msg.get("content")
+                    )
+                    if content and isinstance(content, str) and len(content.strip()) > 5:
+                        assistant_text = content[:8000]
+                        break
+            if not assistant_text:
+                profile = result.get("profile", {}) or {}
+                recs = result.get("recommendations", []) or []
+                city = profile.get("city") or "Lahore"
+                area = profile.get("area") or ""
+                location_str = f"{area} ({city})" if area and city else (area or city)
+
+                if recs:
+                    top = recs[0]
+                    price_num = top.get("price", 0)
+                    if price_num >= 10000000:
+                        price_str = f"PKR {price_num / 10000000:g} crore"
+                    elif price_num >= 100000:
+                        price_str = f"PKR {price_num / 100000:g} lakh"
+                    else:
+                        price_str = f"PKR {price_num:,}"
+
+                    prop_name = top.get("name", "Property")
+                    assistant_text = (
+                        f"Ji bilkul, hamare paas {location_str} mein behtareen options mojood hain, "
+                        f"jaise ke {prop_name} ({price_str}). Kya aap is property ka visit schedule karna chahein ge ya mazeed options dekhna chahte hain?"
+                    )
+                elif location_str:
+                    assistant_text = (
+                        f"Ji bilkul, main {location_str} mein aap ke liye properties check kar rahi hoon. "
+                        f"Aap ka andazan budget kitna hai aur kis type ya marla ki property talash kar rahe hain?"
+                    )
                 else:
-                    price_str = f"PKR {price_num:,}"
+                    assistant_text = (
+                        "Main Real Estate Hub se Zara hoon. "
+                        "Main aap ki property ki talash mein kis tarah madad kar sakti hoon? Aap kis shehar ya area mein dekh rahe hain?"
+                    )
 
-                prop_name = top.get("name", "Property")
-                assistant_text = (
-                    f"Ji bilkul, hamare paas {location_str} mein behtareen options mojood hain, "
-                    f"jaise ke {prop_name} ({price_str}). Kya aap is property ka visit schedule karna chahein ge ya mazeed options dekhna chahte hain?"
-                )
-            elif location_str:
-                assistant_text = (
-                    f"Ji bilkul, main {location_str} mein aap ke liye properties check kar rahi hoon. "
-                    f"Aap ka andazan budget kitna hai aur kis type ya marla ki property talash kar rahe hain?"
-                )
-            else:
-                assistant_text = (
-                    "Main Real Estate Hub se Zara hoon. "
-                    "Main aap ki property ki talash mein kis tarah madad kar sakti hoon? Aap kis shehar ya area mein dekh rahe hain?"
-                )
+            strip_fn = strip_unwanted_greetings or fallback_strip_greetings
+            assistant_text = strip_fn(assistant_text)
 
-        assistant_text = strip_unwanted_greetings(assistant_text)
+            # If visit/appointment is already booked, do not return property recommendations
+            recs_to_send = result.get("recommendations", [])
+            if result.get("appointment_details") or result.get("next_step") == "appointment_confirmed":
+                recs_to_send = []
 
-        # If visit/appointment is already booked, do not return property recommendations
-        recs_to_send = result.get("recommendations", [])
-        if result.get("appointment_details") or result.get("next_step") == "appointment_confirmed":
-            recs_to_send = []
+            return {
+                "status": "ok",
+                "session_id": clean_session_id,
+                "reply": assistant_text,
+                "intent": result.get("intent"),
+                "profile": {k: v for k, v in (result.get("profile") or {}).items()
+                            if k not in ("phone_number", "cnic", "email")},
+                "recommendations": recs_to_send,
+                "next_step": result.get("next_step"),
+                "learned_context_used": result.get("learned_context_used", False),
+                "confidence": result.get("confidence"),
+            }
+        except Exception as e:
+            logger.warning("LangGraph orchestrator turn failed, using fallback: %s", e)
 
+    # Seamless fallback processing on lightweight environments (e.g. Vercel Serverless)
+    try:
+        return process_chat_turn(session_id=clean_session_id, message=clean_message)
+    except Exception as e:
+        logger.exception("agent_chat fallback failed")
         return {
             "status": "ok",
-            "session_id": payload.session_id,
-            "reply": assistant_text,
-            "intent": result.get("intent"),
-            "profile": {k: v for k, v in (result.get("profile") or {}).items()
-                        if k not in ("phone_number", "cnic", "email")},
-            "recommendations": recs_to_send,
-            "next_step": result.get("next_step"),
-            "learned_context_used": result.get("learned_context_used", False),
-            "confidence": result.get("confidence"),
+            "session_id": clean_session_id,
+            "reply": (
+                "Main Real Estate Hub se Zara hoon. Main Lahore, Karachi, Islamabad aur Rawalpindi mein "
+                "properties dhundne aur visit book karne mein aap ki madad kar sakti hoon. Aap kis area mein property talash kar rahe hain?"
+            ),
+            "intent": "lead_inquiry",
+            "profile": {},
+            "recommendations": [],
+            "next_step": "followup",
+            "learned_context_used": False,
+            "confidence": 0.7,
         }
-    except Exception as e:
-        logger.exception("agent_chat failed")
-        raise HTTPException(
-            status_code=500,
-            detail="Internal error processing chat. Please try again later.",
-        ) from e
 
 
 # ===========================================================================
